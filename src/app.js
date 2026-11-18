@@ -3,8 +3,10 @@ require('dotenv').config();
 const path = require('path');
 const express = require('express');
 const sequelize = require('./config/db');
+const usuarioSimulado = require('./middleware/usuarioSimulado');
 
 const app = express();
+app.use(usuarioSimulado); // TEMPORAL: se quita cuando exista el login real
 
 // EJS escapa automáticamente lo que se muestra con <%= %> (prevención de XSS)
 app.set('view engine', 'ejs');
