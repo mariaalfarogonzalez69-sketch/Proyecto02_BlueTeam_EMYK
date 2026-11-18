@@ -109,9 +109,9 @@ Requisitos: Node.js, PostgreSQL y pgAdmin.
 | Bloque | Requerimientos | Responsable |
 | --- | --- | --- |
 | Base de datos, autenticación, sesión, CSRF y auditoría | UTN-01, UTN-02, UTN-07c, UTN-07d, UTN-09 | Emily ALfaro González |
-| Usuarios, roles y permisos | UTN-04, UTN-05, UTN-06 | Melanni Díaz Ugalde |
+| Usuarios, roles y permisos | UTN-04, UTN-05, UTN-06 | Katlyn Fernández Ramos |
 | Eventos, ventas, reglas de negocio y SQL Injection | UTN-03, RFD, UTN-07a | Yesenia Pérez Rodríguez |
-| XSS, encabezados HTTP, pruebas de seguridad y documento técnico | UTN-07b, UTN-08, UTN-10 | Katlyn Fernández Ramos |
+| XSS, encabezados HTTP, pruebas de seguridad y documento técnico | UTN-07b, UTN-08, UTN-10 | Melanni Díaz Ugalde |
 
 ## Tecnología
 
