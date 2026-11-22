@@ -101,7 +101,7 @@ Requisitos: Node.js, PostgreSQL y pgAdmin.
 | Rol | Qué puede hacer |
 | --- | --- |
 | SuperAdmin | Administra usuarios, roles y permisos, consulta los reportes y el registro de auditoría |
-| Auditor | Solo lectura de usuarios y de eventos |
+| Auditor | Solo lectura de usuarios y de eventos, consulta los reportes |
 | Taquillero | Administra eventos, vende y anula entradas, valida entradas en la puerta y consulta usuarios en solo lectura |
 
 ## Organización del equipo
