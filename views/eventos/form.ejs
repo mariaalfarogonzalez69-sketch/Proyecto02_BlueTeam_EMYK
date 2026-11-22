@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Formulario de Evento</title>
+  </head>
+  <body>
+
+    <h1><%= evento && evento.id ? 'Editar evento' : 'Nuevo evento' %></h1>
+
+        <% if (errores.length > 0) { %>
+        <ul>
+            <% errores.forEach(e => { %>
+            <li><%= e %></li>
+            <% }) %>
+        </ul>
+        <% } %>
+
+        <form method="POST" action="<%= evento && evento.id ? '/eventos/' + evento.id + '/editar' : '/eventos' %>">
+        <%# TODO: token CSRF %>
+
+        <label>Código
+            <input name="codigo" value="<%= evento ? evento.codigo : '' %>">
+        </label>
+
+        <label>Nombre
+            <input name="nombre" value="<%= evento ? evento.nombre : '' %>">
+        </label>
+
+        <label>Lugar
+            <input name="lugar" value="<%= evento ? evento.lugar : '' %>">
+        </label>
+
+        <label>Fecha
+            <input name="fecha" type="datetime-local" value="<%= evento ? evento.fecha : '' %>">
+        </label>
+
+        <label>Capacidad
+            <input name="capacidad" type="number" min="1" value="<%= evento ? evento.capacidad : '' %>">
+        </label>
+
+        <label>Precio
+            <input name="precio" type="number" step="0.01" min="0" value="<%= evento ? evento.precio : '' %>">
+        </label>
+
+        <button type="submit">Guardar</button>
+        <a href="/eventos">Cancelar</a>
+        </form>
+
+  </body>
+</html>
