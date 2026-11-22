@@ -17,6 +17,7 @@ app.use(express.static(path.join(__dirname, '..', 'public')));
 
 // --- Rutas (cada persona agrega SOLO su línea aquí) ---
 app.use('/', require('./routes/index'));
+app.use('/', require('./routes/eventos'));
 
 const PORT = process.env.PORT || 3000;
 
