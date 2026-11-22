@@ -14,14 +14,15 @@ INSERT INTO permisos (nombre) VALUES ('crear'), ('editar'), ('borrar'), ('ver_re
 INSERT INTO rol_permiso (rol_id, permiso_id)
 SELECT r.id, p.id FROM roles r, permisos p WHERE r.nombre = 'SuperAdmin';
 
--- Auditor: solo ver reportes (propuesta, falta confirmar con el equipo)
+-- Auditor: solo ver reportes
 INSERT INTO rol_permiso (rol_id, permiso_id)
 SELECT r.id, p.id FROM roles r, permisos p
 WHERE r.nombre = 'Auditor' AND p.nombre = 'ver_reportes';
 
--- Taquillero: crear, editar, borrar y ver reportes (propuesta)
+-- Taquillero: crear, editar y borrar; NO ve reportes
 INSERT INTO rol_permiso (rol_id, permiso_id)
-SELECT r.id, p.id FROM roles r, permisos p WHERE r.nombre = 'Taquillero';
+SELECT r.id, p.id FROM roles r, permisos p
+WHERE r.nombre = 'Taquillero' AND p.nombre IN ('crear', 'editar', 'borrar');
 
 -- ---------- Usuarios de prueba (uno por rol) ----------
 -- Las contraseñas están hasheadas con bcrypt (costo 12); las claves de prueba van en el README

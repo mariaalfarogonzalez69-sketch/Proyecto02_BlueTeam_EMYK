@@ -4,7 +4,7 @@
 const PERMISOS_POR_ROL = {
   SuperAdmin: ['crear', 'editar', 'borrar', 'ver_reportes'],
   Auditor: ['ver_reportes'],
-  Taquillero: ['crear', 'editar', 'borrar', 'ver_reportes'],
+  Taquillero: ['crear', 'editar', 'borrar'],
 };
 
 module.exports = function usuarioSimulado(req, res, next) {
