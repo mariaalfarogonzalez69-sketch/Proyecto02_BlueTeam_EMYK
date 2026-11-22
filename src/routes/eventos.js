@@ -56,16 +56,19 @@ router.post(
       });
       res.redirect("/eventos");
     } catch (err) {
-      if (
-        err.name === "SequelizeValidationError" ||
-        err.name === "SequelizeUniqueConstraintError"
-      ) {
-        const errores = err.errors.map((e) => e.message);
-        return res
-          .status(400)
-          .render("eventos/form", { evento: req.body, errores });
+      if (err.name === "SequelizeUniqueConstraintError") {
+        return res.status(400).render("eventos/form", {
+          evento: req.body,
+          errores: ["Ya existe un evento con ese código"],
+        });
       }
-      throw err; // cualquier otro error lo maneja la página 500
+      if (err.name === "SequelizeValidationError") {
+        return res.status(400).render("eventos/form", {
+          evento: req.body,
+          errores: err.errors.map((e) => e.message),
+        });
+      }
+      throw err;
     }
   },
 );
@@ -113,6 +116,12 @@ router.post(
       await evento.save();
       res.redirect(`/eventos/${evento.id}`);
     } catch (err) {
+      if (err.name === "SequelizeUniqueConstraintError") {
+        return res.status(400).render("eventos/form", {
+          evento: { ...req.body, id: evento.id },
+          errores: ["Ya existe un evento con ese código"],
+        });
+      }
       if (err.name === "SequelizeValidationError") {
         return res.status(400).render("eventos/form", {
           evento: { ...req.body, id: evento.id },
