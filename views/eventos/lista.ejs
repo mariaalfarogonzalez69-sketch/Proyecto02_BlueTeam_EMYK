@@ -10,6 +10,9 @@
     <form method="GET" action="/eventos">
       <input name="q" value="<%= q %>" placeholder="Buscar por nombre">
       <button type="submit">Buscar</button>
+      <% if (q) { %>
+        <a href="/eventos">Limpiar búsqueda</a>
+      <% } %>
     </form>
 
     <% if (usuario.rol === 'Taquillero') { %>
