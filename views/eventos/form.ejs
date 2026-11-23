@@ -16,6 +16,16 @@
         </ul>
         <% } %>
 
+        <%
+            function paraInputFecha(valor) {
+                if (!valor) return '';
+                if (typeof valor === 'string') return valor; 
+                const pad = (n) => String(n).padStart(2, '0');
+                return valor.getFullYear() + '-' + pad(valor.getMonth() + 1) + '-' + pad(valor.getDate())
+                + 'T' + pad(valor.getHours()) + ':' + pad(valor.getMinutes());
+            }
+        %>
+
         <form method="POST" action="<%= evento && evento.id ? '/eventos/' + evento.id + '/editar' : '/eventos' %>">
         <%# TODO: token CSRF %>
 
@@ -32,7 +42,7 @@
         </label>
 
         <label>Fecha
-            <input name="fecha" type="datetime-local" value="<%= evento ? evento.fecha : '' %>">
+            <input name="fecha" type="datetime-local" value="<%= paraInputFecha(evento ? evento.fecha : '') %>">
         </label>
 
         <label>Capacidad
