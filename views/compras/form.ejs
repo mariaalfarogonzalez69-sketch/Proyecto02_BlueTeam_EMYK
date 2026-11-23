@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Formulario de Compra</title>
+  </head>
+  <body>
+
+    <h1>Comprar entradas para: <%= evento.nombre %></h1>
+
+    <%# TODO: si no hay entradas disponibles o el evento ya pasó, mostrar un aviso en lugar del formulario (la protección real está en el servidor) %>
+        
+    <p>Fecha: <%= evento.fecha.toLocaleString('es-CR') %></p>
+        <p>Precio por entrada: <%= evento.precio %></p>
+        <p>Entradas disponibles: <%= evento.capacidad - evento.entradas_vendidas %></p>
+        
+
+        <% if (errores.length > 0) { %>
+        <ul>
+            <% errores.forEach(e => { %>
+            <li><%= e %></li>
+            <% }) %>
+        </ul>
+        <% } %>
+
+        <form method="POST" action="/eventos/<%= evento.id %>/compra">
+        <%# TODO: token CSRF %>
+
+        <label>Cantidad de entradas (máximo 6)
+            <input name="cantidad" type="number" min="1" max="6" value="<%= compra.cantidad || 1 %>">
+        </label>
+
+        <label>Nombre del comprador
+            <input name="nombre" value="<%= compra.nombre || '' %>">
+        </label>
+
+        <label>Correo
+            <input name="correo" type="email" value="<%= compra.correo || '' %>">
+        </label>
+
+        <label>Teléfono (opcional)
+            <input name="telefono" type="tel" value="<%= compra.telefono || '' %>">
+        </label>
+
+        <button type="submit">Comprar</button>
+        <a href="/eventos/<%= evento.id %>">Cancelar</a>
+        </form>
+
+  </body>
+</html>
