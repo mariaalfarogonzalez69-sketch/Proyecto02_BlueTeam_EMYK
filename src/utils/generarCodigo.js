@@ -12,4 +12,4 @@ function generarCodigoEntrada() {
   return codigo;
 }
 
-module.export = { generarCodigoEntrada };
+module.exports = { generarCodigoEntrada };
