@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Iniciar sesión</title>
+</head>
+<body>
+  <h1>Iniciar sesión</h1>
+  <!-- <%= %> escapa lo que muestra: previene XSS -->
+  <% if (aviso) { %><p><%= aviso %></p><% } %>
+  <% if (error) { %><p style="color:hsl(349, 100%, 35%)"><%= error %></p><% } %>
+  <form method="POST" action="/login">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <label>Usuario <input name="username" maxlength="50" required autofocus></label><br>
+    <label>Contraseña <input name="password" type="password" maxlength="128" required></label><br>
+    <button type="submit">Entrar</button>
+  </form>
+</body>
+</html>
