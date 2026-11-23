@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Detalle de la Compra</title>
+  </head>
+  <body>
+
+    <h1>Detalle de la compra #<%= compra.id %></h1>
+
+        <p><strong>Fecha y Hora:</strong> <%= compra.fecha_hora.toLocaleString('es-CR') %></p>
+        <p><strong>Cantidad:</strong> <%= compra.cantidad %></p>
+        <p><strong>Total:</strong> ₡<%= compra.total %></p>
+        <p><strong>Estado:</strong> <%= compra.estado %></p>
+
+        <a href="/eventos/<%= compra.evento_id %>/compras">Volver a la lista de compras</a>
+
+        <% if (usuario.rol === 'Taquillero' && compra.estado === 'activa') { %>
+          <form method="POST" action="/compra/<%= compra.id %>/anular">
+            <%# TODO: token CSRF %>
+            <button type="submit">Anular compra</button>
+          </form>
+        <% } %>   
+
+  </body>
+</html>
+
