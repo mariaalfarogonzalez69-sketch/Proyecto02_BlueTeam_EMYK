@@ -40,7 +40,7 @@ router.post('/login', async (req, res, next) => {
 
     if (!fila || !ok) {
       // Nunca se guarda ni se imprime la contraseña
-      await registrarAuditoria(req, 'login_fallido', `usuario intentado: ${username}`);
+      await registrarAuditoria(req, 'login_fallido', 'credenciales incorrectas', { usernameIntentado: username });
       return res.status(401).render('login', { error: MENSAJE_ERROR, aviso: null });
     }
 
