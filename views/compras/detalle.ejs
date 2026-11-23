@@ -8,7 +8,7 @@
 
     <h1>Detalle de la compra #<%= compra.id %></h1>
 
-        <p><strong>Fecha y Hora:</strong> <%= compra.fecha_hora.toLocaleString('es-CR') %></p>
+        <p><strong>Fecha y Hora:</strong> <%= compra.fecha_hora.toLocaleString('es-CR', { timeZone: 'America/Costa_Rica' }) %></p>
         <p><strong>Cantidad:</strong> <%= compra.cantidad %></p>
         <p><strong>Total:</strong> ₡<%= compra.total %></p>
         <p><strong>Estado:</strong> <%= compra.estado %></p>

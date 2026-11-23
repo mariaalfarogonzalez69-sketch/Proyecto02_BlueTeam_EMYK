@@ -11,7 +11,7 @@
         <p><strong>Código:</strong> <%= evento.codigo %></p>
         <p><strong>Nombre:</strong> <%= evento.nombre %></p>
         <p><strong>Lugar:</strong> <%= evento.lugar %></p>
-        <p><strong>Fecha:</strong> <%= evento.fecha.toLocaleString('es-CR') %></p>
+        <p><strong>Fecha:</strong> <%= evento.fecha.toLocaleString('es-CR', { timeZone: 'America/Costa_Rica' }) %></p>
         <p><strong>Capacidad:</strong> <%= evento.capacidad %></p>
         <p><strong>Entradas vendidas:</strong> <%= evento.entradas_vendidas %></p>
         <p><strong>Precio:</strong> ₡<%= evento.precio %></p>

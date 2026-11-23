@@ -20,9 +20,9 @@
             function paraInputFecha(valor) {
                 if (!valor) return '';
                 if (typeof valor === 'string') return valor; 
-                const pad = (n) => String(n).padStart(2, '0');
-                return valor.getFullYear() + '-' + pad(valor.getMonth() + 1) + '-' + pad(valor.getDate())
-                + 'T' + pad(valor.getHours()) + ':' + pad(valor.getMinutes());
+                // 'sv-SE' da el formato 2026-12-01 20:00:00; se muestra en hora de Costa Rica
+                return valor.toLocaleString('sv-SE', { timeZone: 'America/Costa_Rica' })
+                    .slice(0, 16).replace(' ', 'T');
             }
         %>
 

@@ -29,7 +29,7 @@
             <td><%= e.codigo %></td>
             <td><%= e.nombre %></td>
             <td><%= e.lugar %></td>
-            <td><%= e.fecha.toLocaleString('es-CR') %></td>
+            <td><%= e.fecha.toLocaleString('es-CR', { timeZone: 'America/Costa_Rica' }) %></td>
             <td><%= e.publicado ? 'Sí' : 'No' %></td>
             <td><a href="/eventos/<%= e.id %>">Ver detalle</a></td>
           </tr>

@@ -24,7 +24,7 @@
           <% compras.forEach(c => { %>
             <tr>
               <td><%= c.id %></td>
-              <td><%= c.fecha_hora.toLocaleString('es-CR') %></td>
+              <td><%= c.fecha_hora.toLocaleString('es-CR', { timeZone: 'America/Costa_Rica' }) %></td>
               <td><%= c.cantidad %></td>
               <td>₡<%= c.total %></td>
               <td><%= c.estado %></td>

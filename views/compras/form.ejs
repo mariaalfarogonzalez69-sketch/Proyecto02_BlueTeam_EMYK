@@ -10,7 +10,7 @@
 
     <%# TODO: si no hay entradas disponibles o el evento ya pasó, mostrar un aviso en lugar del formulario (la protección real está en el servidor) %>
         
-    <p>Fecha: <%= evento.fecha.toLocaleString('es-CR') %></p>
+    <p>Fecha: <%= evento.fecha.toLocaleString('es-CR', { timeZone: 'America/Costa_Rica' }) %></p>
         <p>Precio por entrada: <%= evento.precio %></p>
         <p>Entradas disponibles: <%= evento.capacidad - evento.entradas_vendidas %></p>
         
