@@ -1,5 +1,5 @@
-// VERSIÓN DE MENTIRA (Fase 0): deja pasar todo.
-// La real (auth-sesion-auditoria) redirige al login si no hay sesión válida.
+// Exige sesión válida. Si venció o no existe, manda al login con un mensaje.
 module.exports = function requiereSesion(req, res, next) {
-  next();
+  if (req.session && req.session.usuario) return next();
+  return res.redirect('/login?motivo=sesion');
 };
