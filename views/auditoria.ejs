@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registro de auditoría</title>
+</head>
+<body>
+  <h1>Registro de auditoría</h1>
+  <p><a href="/">Volver al inicio</a></p>
+
+  <!-- Es un GET que solo lee: no necesita token CSRF -->
+  <form method="GET" action="/auditoria">
+    <label>Tipo
+      <select name="tipo">
+        <option value="">Todos</option>
+        <% tipos.forEach((t) => { %>
+          <option value="<%= t %>" <%= filtro.tipo === t ? 'selected' : '' %>><%= t %></option>
+        <% }) %>
+      </select>
+    </label>
+    <label>Desde <input type="date" name="desde" value="<%= filtro.desde %>"></label>
+    <label>Hasta <input type="date" name="hasta" value="<%= filtro.hasta %>"></label>
+    <button type="submit">Filtrar</button>
+  </form>
+
+  <table border="1" cellpadding="4">
+    <thead>
+      <tr><th>Fecha y hora</th><th>Tipo</th><th>Usuario</th><th>IP</th><th>Ruta</th><th>Detalle</th></tr>
+    </thead>
+    <tbody>
+      <% registros.forEach((r) => { %>
+        <tr>
+          <td><%= new Date(r.fecha_hora).toLocaleString('es-CR') %></td>
+          <td><%= r.tipo_evento %></td>
+          <td><%= r.usuario || '-' %></td>
+          <td><%= r.ip %></td>
+          <td><%= r.ruta %></td>
+          <td><%= r.detalle %></td>
+        </tr>
+      <% }) %>
+      <% if (registros.length === 0) { %><tr><td colspan="6">No hay registros.</td></tr><% } %>
+    </tbody>
+  </table>
+</body>
+</html>

@@ -5,3 +5,4 @@ reportes/
 target/
 .DS_Store
 Thumbs.db
+tests/target/
