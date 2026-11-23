@@ -38,6 +38,11 @@ const Comprador = sequelize.define(
     telefono: {
       type: DataTypes.STRING(30),
       allowNull: true,
+      // Un campo opcional vacío del formulario llega como "": se guarda como null
+      set(valor) {
+        const limpio = typeof valor === "string" ? valor.trim() : valor;
+        this.setDataValue("telefono", limpio === "" ? null : limpio);
+      },
       validate: {
         len: {
           args: [1, 30],
