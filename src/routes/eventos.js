@@ -7,7 +7,7 @@ const requiereSesion = require("../middleware/requiereSesion");
 const requierePermiso = require("../middleware/requierePermiso");
 const requiereRol = require("../middleware/requiereRol");
 const { parsearId } = require("../utils/validarId");
-const { mensajeFechaEvento } = require("../utils/validarFecha");
+const { mensajeFechaEvento, aFechaCR } = require("../utils/validarFecha");
 
 router.param("id", (req, res, next, valor) => {
   if (parsearId(valor) === null) {
@@ -73,7 +73,7 @@ router.post(
         codigo: req.body.codigo,
         nombre: req.body.nombre,
         lugar: req.body.lugar,
-        fecha: req.body.fecha,
+        fecha: aFechaCR(req.body.fecha),
         capacidad: req.body.capacidad,
         precio: req.body.precio,
       });
@@ -129,16 +129,13 @@ router.post(
   async (req, res) => {
     const evento = await Evento.findByPk(req.params.id);
     if (!evento) return res.status(404).send("Evento no encontrado");
-    
+
     // La regla "fecha futura" solo se exige si la fecha CAMBIÓ: así un evento
     // que ya pasó se puede editar sin tocar su fecha.
     // Se tolera menos de 1 minuto de diferencia porque el campo del
     // formulario no trae los segundos.
-    const nueva = new Date(req.body.fecha);
-    const fechaCambio =
-      typeof req.body.fecha !== "string" ||
-      Number.isNaN(nueva.getTime()) ||
-      Math.abs(nueva - evento.fecha) >= 60000;
+    const nueva = aFechaCR(req.body.fecha);
+    const fechaCambio = !nueva || Math.abs(nueva - evento.fecha) >= 60000;
     if (fechaCambio) {
       const errorFecha = mensajeFechaEvento(req.body.fecha);
       if (errorFecha) {
@@ -153,7 +150,8 @@ router.post(
       evento.codigo = req.body.codigo;
       evento.nombre = req.body.nombre;
       evento.lugar = req.body.lugar;
-      evento.fecha = req.body.fecha;
+      // Si la fecha no cambió, se conserva la original (no se toca)
+      if (fechaCambio) evento.fecha = nueva;
       evento.capacidad = req.body.capacidad;
       evento.precio = req.body.precio;
       await evento.save();
