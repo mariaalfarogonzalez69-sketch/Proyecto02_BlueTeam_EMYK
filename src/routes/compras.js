@@ -5,6 +5,14 @@ const { Compra, Evento } = require("../models");
 const requiereSesion = require("../middleware/requiereSesion");
 const requierePermiso = require("../middleware/requierePermiso");
 const requiereRol = require("../middleware/requiereRol");
+const { parsearId } = require('../utils/validarId');
+
+router.param('id', (req, res, next, valor) => {
+  if (parsearId(valor) === null) {
+    return res.status(404).send('No encontrado');
+  }
+  next();   // si es válido, sigue a la ruta normal
+});
 
 // Todas las rutas exigen sesión.
 // Vender y anular exigen, además, el permiso correspondiente y el rol Taquillero.
