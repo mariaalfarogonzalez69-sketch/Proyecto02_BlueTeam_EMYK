@@ -6,6 +6,15 @@ const { Evento } = require("../models");
 const requiereSesion = require("../middleware/requiereSesion");
 const requierePermiso = require("../middleware/requierePermiso");
 const requiereRol = require("../middleware/requiereRol");
+const { parsearId } = require("../utils/validarId");
+const { mensajeFechaEvento } = require("../utils/validarFecha");
+
+router.param("id", (req, res, next, valor) => {
+  if (parsearId(valor) === null) {
+    return res.status(404).send("No encontrado");
+  }
+  next(); // si es válido, sigue a la ruta normal
+});
 
 // Todas las rutas exigen sesión.
 // Las que muestran un formulario de escritura o modifican datos exigen,
@@ -18,8 +27,14 @@ const requiereRol = require("../middleware/requiereRol");
 // Listar: GET /eventos
 // Buscar: GET /eventos?q=evento
 router.get("/eventos", requiereSesion, async (req, res) => {
-  const q = (req.query.q || "").trim();
-  const where = q ? { nombre: { [Op.iLike]: `%${q}%` } } : {}; // Sequelize lo manda como parámetro
+  // q debe ser un texto. Con ?q=a&q=b llega un arreglo y .trim() fallaría,
+  // así que cualquier cosa que no sea texto se trata como búsqueda vacía.
+  // El largo máximo (120) es el mismo del nombre del evento.
+  const q =
+    typeof req.query.q === "string" ? req.query.q.trim().slice(0, 120) : "";
+  // % y _ son comodines de LIKE: se escapan (con \) para buscarlos como texto normal
+  const patron = q.replace(/[\\%_]/g, "\\$&");
+  const where = q ? { nombre: { [Op.iLike]: `%${patron}%` } } : {}; // Sequelize lo manda como parámetro
   const eventos = await Evento.findAll({ where, order: [["fecha", "ASC"]] });
   res.render("eventos/lista", { eventos, q });
 });
@@ -44,6 +59,14 @@ router.post(
   requierePermiso("crear"),
   requiereRol("Taquillero"),
   async (req, res) => {
+    // Regla: al crear, la fecha debe ser válida y futura
+    const errorFecha = mensajeFechaEvento(req.body.fecha);
+    if (errorFecha) {
+      return res
+        .status(400)
+        .render("eventos/form", { evento: req.body, errores: [errorFecha] });
+    }
+
     try {
       // Se eligen los campos uno por uno: nunca se pasa req.body completo
       await Evento.create({
@@ -106,6 +129,26 @@ router.post(
   async (req, res) => {
     const evento = await Evento.findByPk(req.params.id);
     if (!evento) return res.status(404).send("Evento no encontrado");
+    
+    // La regla "fecha futura" solo se exige si la fecha CAMBIÓ: así un evento
+    // que ya pasó se puede editar sin tocar su fecha.
+    // Se tolera menos de 1 minuto de diferencia porque el campo del
+    // formulario no trae los segundos.
+    const nueva = new Date(req.body.fecha);
+    const fechaCambio =
+      typeof req.body.fecha !== "string" ||
+      Number.isNaN(nueva.getTime()) ||
+      Math.abs(nueva - evento.fecha) >= 60000;
+    if (fechaCambio) {
+      const errorFecha = mensajeFechaEvento(req.body.fecha);
+      if (errorFecha) {
+        return res.status(400).render("eventos/form", {
+          evento: { ...req.body, id: evento.id },
+          errores: [errorFecha],
+        });
+      }
+    }
+
     try {
       evento.codigo = req.body.codigo;
       evento.nombre = req.body.nombre;
