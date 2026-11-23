@@ -14,7 +14,7 @@
         <p><strong>Fecha:</strong> <%= evento.fecha.toLocaleString('es-CR') %></p>
         <p><strong>Capacidad:</strong> <%= evento.capacidad %></p>
         <p><strong>Entradas vendidas:</strong> <%= evento.entradas_vendidas %></p>
-        <p><strong>Precio:</strong> <%= evento.precio %></p>
+        <p><strong>Precio:</strong> ₡<%= evento.precio %></p>
         <p><strong>Publicado:</strong> <%= evento.publicado ? 'Sí' : 'No' %></p>
 
         <a href="/eventos">Volver a la lista</a>
