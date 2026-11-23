@@ -20,5 +20,10 @@ function mensajeEventoVigente(fechaEvento, ahora = new Date()) {
 }
 
 //RN-7.3: Cada entrada tiene un código único.
+// No es una función: la garantiza el UNIQUE de entradas.codigo en la base de
+// datos (y unique: true en el modelo Entrada). Revisar "si ya existe" antes de
+// insertar no basta, porque otra venta podría guardar el mismo código entre la
+// revisión y el guardado. Si hay colisión, la base rechaza la entrada y la
+// transacción de la venta se deshace completa.
 
 module.exports = { mensajeEntradas, mensajeEventoVigente }
