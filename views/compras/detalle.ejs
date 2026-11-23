@@ -5,23 +5,58 @@
     <title>Detalle de la Compra</title>
   </head>
   <body>
-
     <h1>Detalle de la compra #<%= compra.id %></h1>
+
+        <% if (errores.length > 0) { %>
+          <ul>
+            <% errores.forEach(e => { %>
+              <li><%= e %></li>
+            <% }) %>
+          </ul>
+        <% } %>
 
         <p><strong>Fecha y Hora:</strong> <%= compra.fecha_hora.toLocaleString('es-CR', { timeZone: 'America/Costa_Rica' }) %></p>
         <p><strong>Cantidad:</strong> <%= compra.cantidad %></p>
         <p><strong>Total:</strong> ₡<%= compra.total %></p>
         <p><strong>Estado:</strong> <%= compra.estado %></p>
 
-        <a href="/eventos/<%= compra.evento_id %>/compras">Volver a la lista de compras</a>
+        <h2>Comprador</h2>
+        <p><strong>Nombre:</strong> <%= comprador.nombre %></p>
+        <p><strong>Correo:</strong> <%= comprador.correo %></p>
+        <p><strong>Teléfono:</strong> <%= comprador.telefono || '—' %></p>
 
+        <h2>Entradas</h2>
+        <% if (mostrarCodigos) { %>
+          <p><strong>Entregue estos códigos al comprador.</strong> Después de 1 minuto solo se verán los últimos 4 caracteres.</p>
+        <% } %>
+        <table>
+          <tr>
+            <th>#</th>
+            <th>Código</th>
+            <th>Estado de la entrada</th>
+          </tr>
+          <% entradas.forEach((e, i) => { %>
+            <tr>
+              <td><%= i + 1 %></td>
+              <td><%= e.codigo %></td>
+              <td>
+                <% if (compra.estado === 'anulada') { %>
+                  Sin validez (compra anulada)
+                <% } else { %>
+                  <%= e.usada ? 'Usada' : 'Disponible' %>
+                <% } %>
+              </td>
+            </tr>
+          <% }) %>
+        </table>
+
+        <a href="/eventos/<%= compra.evento_id %>/compras">Volver a la lista de compras</a>
         <% if (usuario.rol === 'Taquillero' && compra.estado === 'activa') { %>
           <form method="POST" action="/compra/<%= compra.id %>/anular">
             <%# TODO: token CSRF %>
             <button type="submit">Anular compra</button>
           </form>
         <% } %>   
-
   </body>
 </html>
 

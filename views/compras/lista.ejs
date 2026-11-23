@@ -5,7 +5,6 @@
     <title>Lista de Compras</title>
   </head>
   <body>
-
     <h1>Compras de: <%= evento.nombre %></h1>
       <a href="/eventos/<%= evento.id %>">Volver al evento</a>
 
@@ -16,6 +15,7 @@
           <tr>
             <th>ID</th>
             <th>Fecha y Hora</th>
+            <th>Comprador</th>
             <th>Cantidad</th>
             <th>Total</th>
             <th>Estado</th>
@@ -25,6 +25,7 @@
             <tr>
               <td><%= c.id %></td>
               <td><%= c.fecha_hora.toLocaleString('es-CR', { timeZone: 'America/Costa_Rica' }) %></td>
+              <td><%= c.comprador %> (<%= c.correo %>)</td>
               <td><%= c.cantidad %></td>
               <td>₡<%= c.total %></td>
               <td><%= c.estado %></td>
@@ -33,6 +34,5 @@
           <% }) %>
         </table>
       <% } %>
-
   </body>
 </html>
