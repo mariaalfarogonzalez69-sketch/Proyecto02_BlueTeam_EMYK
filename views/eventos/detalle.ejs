@@ -20,10 +20,12 @@
         <a href="/eventos">Volver a la lista</a>
 
         <% if (usuario.rol === 'Taquillero') { %>
-        <a href="/eventos/<%= evento.id %>/editar">Editar</a>
-        <a href="/eventos/<%= evento.id %>/eliminar">Eliminar</a>
-        <a href="/eventos/<%= evento.id %>/compra">Vender entradas</a>
-        <a href="/eventos/<%= evento.id %>/compras">Ver compras</a>
+          <a href="/eventos/<%= evento.id %>/editar">Editar</a>
+          <a href="/eventos/<%= evento.id %>/eliminar">Eliminar</a>
+          <% if (evento.publicado) { %>
+            <a href="/eventos/<%= evento.id %>/compra">Vender entradas</a>
+          <% } %>
+          <a href="/eventos/<%= evento.id %>/compras">Ver compras</a>
 
         <% if (!evento.publicado) { %>
             <form method="POST" action="/eventos/<%= evento.id %>/publicar">
