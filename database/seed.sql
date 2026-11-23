@@ -51,3 +51,91 @@ INSERT INTO eventos (codigo, nombre, lugar, fecha, capacidad, entradas_vendidas,
 -- ---------- Un comprador ficticio ----------
 INSERT INTO compradores (nombre, correo, telefono)
 VALUES ('Carlos Comprador', 'carlos@example.com', '8888-0000');
+
+-- ============================================================
+-- Compras y entradas de prueba (TODO FICTICIO)
+--
+-- Regla de coherencia: para cada evento,
+--   entradas_vendidas = suma de "cantidad" de sus compras ACTIVAS
+--   y cada compra tiene tantas filas en "entradas" como su "cantidad".
+-- Los códigos de entrada de este seed son de prueba y predecibles (se derivan
+-- de un md5 fijo); los códigos REALES los genera la aplicación con crypto.
+-- ============================================================
+
+-- ---------- Más compradores ficticios (Carlos ya existe) ----------
+INSERT INTO compradores (nombre, correo, telefono) VALUES
+ ('Marta Ejemplo', 'marta@example.com', '8888-1111'),
+ ('Luis Prueba',   'luis@example.com',  '8888-2222'),
+ ('Ana Ficticia',  'ana@example.com',   NULL),
+ ('Pedro Demo',    'pedro@example.com', '8888-3333');
+
+-- ---------- Compras con pocas filas (se escriben a mano) ----------
+-- vendida_por: la taquillera de prueba. total = cantidad * precio del evento.
+INSERT INTO compras (evento_id, comprador_id, cantidad, total, estado, fecha_hora, vendida_por)
+VALUES
+ -- CONC001 (25000): dos compras activas y una ANULADA (para probar anulación)
+ ((SELECT id FROM eventos WHERE codigo = 'CONC001'),
+  (SELECT id FROM compradores WHERE correo = 'carlos@example.com'),
+  2, 50000, 'activa',  now() - interval '3 days', (SELECT id FROM usuarios WHERE username = 'taquillero')),
+ ((SELECT id FROM eventos WHERE codigo = 'CONC001'),
+  (SELECT id FROM compradores WHERE correo = 'marta@example.com'),
+  3, 75000, 'activa',  now() - interval '2 days', (SELECT id FROM usuarios WHERE username = 'taquillero')),
+ ((SELECT id FROM eventos WHERE codigo = 'CONC001'),
+  (SELECT id FROM compradores WHERE correo = 'luis@example.com'),
+  1, 25000, 'anulada', now() - interval '1 day',  (SELECT id FROM usuarios WHERE username = 'taquillero')),
+
+ -- CONC002 (18000)
+ ((SELECT id FROM eventos WHERE codigo = 'CONC002'),
+  (SELECT id FROM compradores WHERE correo = 'ana@example.com'),
+  4, 72000, 'activa',  now() - interval '2 days', (SELECT id FROM usuarios WHERE username = 'taquillero')),
+
+ -- CONC005 (15000)
+ ((SELECT id FROM eventos WHERE codigo = 'CONC005'),
+  (SELECT id FROM compradores WHERE correo = 'pedro@example.com'),
+  6, 90000, 'activa',  now() - interval '4 days', (SELECT id FROM usuarios WHERE username = 'taquillero')),
+ ((SELECT id FROM eventos WHERE codigo = 'CONC005'),
+  (SELECT id FROM compradores WHERE correo = 'carlos@example.com'),
+  2, 30000, 'activa',  now() - interval '1 day',  (SELECT id FROM usuarios WHERE username = 'taquillero')),
+
+ -- CONC010 (14000, evento PASADO): se vendió antes de que pasara
+ ((SELECT id FROM eventos WHERE codigo = 'CONC010'),
+  (SELECT id FROM compradores WHERE correo = 'marta@example.com'),
+  2, 28000, 'activa',  now() - interval '15 days', (SELECT id FROM usuarios WHERE username = 'taquillero'));
+
+-- ---------- CONC009 (9000): casi agotado, 78 de 80 ----------
+-- 13 compras de 6 entradas = 78. generate_series genera los números 1 a 13
+-- y se reparten entre los 5 compradores con el resto de la división (n % 5).
+INSERT INTO compras (evento_id, comprador_id, cantidad, total, estado, fecha_hora, vendida_por)
+SELECT
+  (SELECT id FROM eventos WHERE codigo = 'CONC009'),
+  (SELECT id FROM compradores ORDER BY id OFFSET (n % 5) LIMIT 1),
+  6, 54000, 'activa', now() - (n || ' hours')::interval,
+  (SELECT id FROM usuarios WHERE username = 'taquillero')
+FROM generate_series(1, 13) AS n;
+
+-- ---------- Una entrada por cada unidad de cada compra ----------
+-- Para cada compra se generan "cantidad" filas con un código de prueba único.
+INSERT INTO entradas (compra_id, codigo)
+SELECT c.id, upper(substr(md5('seed-' || c.id || '-' || k), 1, 16))
+FROM compras c
+CROSS JOIN LATERAL generate_series(1, c.cantidad) AS k;
+
+-- Una entrada ya USADA (del evento pasado) para probar la validación en puerta
+UPDATE entradas
+SET usada = TRUE, fecha_uso = now() - interval '10 days'
+WHERE id = (
+  SELECT MIN(en.id)
+  FROM entradas en
+  JOIN compras c  ON c.id  = en.compra_id
+  JOIN eventos ev ON ev.id = c.evento_id
+  WHERE ev.codigo = 'CONC010'
+);
+
+-- ---------- Cuadrar el cupo con las compras ACTIVAS ----------
+-- Así entradas_vendidas nunca queda inventado: sale de las compras.
+UPDATE eventos e
+SET entradas_vendidas = COALESCE((
+  SELECT SUM(c.cantidad)
+  FROM compras c
+  WHERE c.evento_id = e.id AND c.estado = 'activa'
+), 0);
