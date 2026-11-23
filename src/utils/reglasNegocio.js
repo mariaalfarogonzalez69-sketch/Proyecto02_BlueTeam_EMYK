@@ -9,7 +9,16 @@ function mensajeEntradas(valor) {
 }
 
 //RN-7.1: No se venden entradas de eventos pasados.
+function mensajeEventoVigente(fechaEvento, ahora = new Date()) {
+  if (!(fechaEvento instanceof Date) || Number.isNaN(fechaEvento.getTime())) {
+    return "El evento no tiene una fecha válida";
+  }
+  if (fechaEvento.getTime() <= ahora.getTime()) {
+    return "El evento ya pasó: no se venden entradas";
+  }
+  return null;
+}
 
 //RN-7.3: Cada entrada tiene un código único.
 
-module.exports = { mensajeEntradas }
+module.exports = { mensajeEntradas, mensajeEventoVigente }
