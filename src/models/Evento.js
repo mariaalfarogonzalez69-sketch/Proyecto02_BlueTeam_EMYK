@@ -1,6 +1,18 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/db");
 
+// Texto que llega del formulario: se le quitan los espacios de los extremos.
+// Cualquier cosa que no sea texto (por ejemplo un arreglo, si el campo se repite)
+// se trata como "no enviado", así el error es "es obligatorio" y no uno interno.
+function limpiarTexto(valor) {
+  return typeof valor === "string" ? valor.trim() : null;
+}
+// Igual, pero también acepta números (por si el servidor asigna uno).
+function limpiarNumero(valor) {
+  if (typeof valor === "number") return valor;
+  return typeof valor === "string" ? valor.trim() : null;
+}
+
 const Evento = sequelize.define(
   "Evento",
   {
@@ -14,7 +26,11 @@ const Evento = sequelize.define(
       type: DataTypes.STRING(20),
       allowNull: false,
       unique: true,
+      set(valor) {
+        this.setDataValue("codigo", limpiarTexto(valor));
+      },
       validate: {
+        notNull: { msg: "El código es obligatorio" },
         len: {
           args: [1, 20],
           msg: "El código debe tener entre 1 y 20 caracteres",
@@ -29,7 +45,11 @@ const Evento = sequelize.define(
     nombre: {
       type: DataTypes.STRING(120),
       allowNull: false,
+      set(valor) {
+        this.setDataValue("nombre", limpiarTexto(valor));
+      },
       validate: {
+        notNull: { msg: "El nombre es obligatorio" },
         notEmpty: { msg: "El nombre es obligatorio" },
         len: {
           args: [1, 120],
@@ -41,7 +61,11 @@ const Evento = sequelize.define(
     lugar: {
       type: DataTypes.STRING(120),
       allowNull: false,
+      set(valor) {
+        this.setDataValue("lugar", limpiarTexto(valor));
+      },
       validate: {
+        notNull: { msg: "El lugar es obligatorio" },
         notEmpty: { msg: "El lugar es obligatorio" },
         len: {
           args: [1, 120],
@@ -54,6 +78,7 @@ const Evento = sequelize.define(
       type: DataTypes.DATE,
       allowNull: false,
       validate: {
+        notNull: { msg: "La fecha es obligatoria" },
         isDate: { msg: "La fecha no es válida" },
       },
     },
@@ -61,7 +86,11 @@ const Evento = sequelize.define(
     capacidad: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      set(valor) {
+        this.setDataValue("capacidad", limpiarNumero(valor));
+      },
       validate: {
+        notNull: { msg: "La capacidad es obligatoria" },
         isInt: { msg: "La capacidad debe ser un número entero" },
         min: { args: [1], msg: "La capacidad debe ser mayor a 0" },
         max: {
@@ -87,8 +116,15 @@ const Evento = sequelize.define(
     precio: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
+      set(valor) {
+        this.setDataValue("precio", limpiarNumero(valor));
+      },
       validate: {
-        isDecimal: { msg: "El precio debe ser un número" },
+        notNull: { msg: "El precio es obligatorio" },
+        is: {
+          args: /^(\d+(\.\d{1,2})?|\.\d{1,2})$/,
+          msg: "El precio debe ser un número con máximo 2 decimales (use punto, no coma)",
+        },
         min: { args: [0], msg: "El precio no puede ser negativo" },
         max: { args: [1000000], msg: "El precio no puede ser mayor a 1000000" },
       },
