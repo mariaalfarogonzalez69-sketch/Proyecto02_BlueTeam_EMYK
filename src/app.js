@@ -46,6 +46,7 @@ app.use(requiereSesion);
 
 // --- Rutas protegidas (cada persona agrega SOLO su línea aquí) ---
 app.use('/', require('./routes/index'));
+app.use('/', require('./routes/auditoria'));
 
 // Respuesta limpia cuando falla el token CSRF (sin rutas de archivos ni trazas)
 app.use(async (err, req, res, next) => {
