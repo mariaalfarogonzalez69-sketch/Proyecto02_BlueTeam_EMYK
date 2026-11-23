@@ -8,6 +8,14 @@ function mensajeEntradas(valor) {
   return null;
 }
 
+// Regla adicional: solo se venden eventos publicados.
+function mensajeEventoPublicado(publicado) {
+  if (publicado !== true) {
+    return "El evento no está publicado: no se venden entradas";
+  }
+  return null;
+}
+
 //RN-7.1: No se venden entradas de eventos pasados.
 function mensajeEventoVigente(fechaEvento, ahora = new Date()) {
   if (!(fechaEvento instanceof Date) || Number.isNaN(fechaEvento.getTime())) {
@@ -26,4 +34,8 @@ function mensajeEventoVigente(fechaEvento, ahora = new Date()) {
 // revisión y el guardado. Si hay colisión, la base rechaza la entrada y la
 // transacción de la venta se deshace completa.
 
-module.exports = { mensajeEntradas, mensajeEventoVigente }
+module.exports = {
+  mensajeEntradas,
+  mensajeEventoVigente,
+  mensajeEventoPublicado,
+};
