@@ -64,6 +64,10 @@ const Evento = sequelize.define(
       validate: {
         isInt: { msg: "La capacidad debe ser un número entero" },
         min: { args: [1], msg: "La capacidad debe ser mayor a 0" },
+        max: {
+          args: [100000],
+          msg: "La capacidad no puede ser mayor a 100000",
+        },
       },
     },
 
@@ -86,6 +90,7 @@ const Evento = sequelize.define(
       validate: {
         isDecimal: { msg: "El precio debe ser un número" },
         min: { args: [0], msg: "El precio no puede ser negativo" },
+        max: { args: [1000000], msg: "El precio no puede ser mayor a 1000000" },
       },
     },
 
@@ -98,6 +103,18 @@ const Evento = sequelize.define(
   {
     tableName: "eventos", // el nombre real de la tabla
     timestamps: false, // la tabla no tiene createdAt ni updatedAt
+
+    // Se ejecuta en cada save(): no se puede bajar la capacidad por debajo de
+    // las entradas ya vendidas.
+    validate: {
+      capacidadNoMenorQueVendidas() {
+        if (Number(this.capacidad) < Number(this.entradas_vendidas)) {
+          throw new Error(
+            `La capacidad no puede ser menor que las entradas ya vendidas (${this.entradas_vendidas})`,
+          );
+        }
+      },
+    },
   },
 );
 
