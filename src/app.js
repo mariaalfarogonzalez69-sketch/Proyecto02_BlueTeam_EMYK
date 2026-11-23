@@ -2,10 +2,31 @@
 require('dotenv').config();
 const path = require('path');
 const express = require('express');
+const helmet = require('helmet');
 const sequelize = require('./config/db');
 const usuarioSimulado = require('./middleware/usuarioSimulado');
 
 const app = express();
+// --- Encabezados de seguridad (UTN-08) ---
+app.use(helmet({
+  contentSecurityPolicy: {
+    useDefaults: false,
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'"],
+      styleSrc: ["'self'"],
+      imgSrc: ["'self'", 'data:'],
+      objectSrc: ["'none'"],
+      baseUri: ["'self'"],
+      formAction: ["'self'"],
+      frameAncestors: ["'none'"]
+    }
+  },
+  frameguard: { action: 'deny' },
+  hsts: process.env.USE_HTTPS === 'true'
+    ? { maxAge: 15552000 }
+    : false
+}));
 app.use(usuarioSimulado); // TEMPORAL: se quita cuando exista el login real
 
 // EJS escapa automáticamente lo que se muestra con <%= %> (prevención de XSS)
