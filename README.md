@@ -38,28 +38,32 @@ Proyecto02_BlueTeam_EMYK/
 ├── src/
 │   ├── app.js
 │   ├── config/db.js
-│   ├── routes/index.js
-│   ├── middleware/
-│   ├── models/
-│   └── utils/
+│   ├── routes/        (auth, auditoria, eventos, compras, index)
+│   ├── middleware/    (sesión, CSRF, permisos, roles, errores)
+│   ├── models/        (Evento, Compra, Comprador, Entrada)
+│   └── utils/         (contraseñas, auditoría, reglas de negocio)
 │
 ├── views/
-├── public/
-└── tests/
+├── public/css/
+└── tests/             (proyecto Maven con JUnit 5)
 ```
 
 ## Descripción de los archivos
 
 | Archivo o carpeta | Para qué sirve |
 | --- | --- |
-| `src/app.js` | Punto de entrada: configura Express, EJS y registra las rutas |
+| `src/app.js` | Punto de entrada: sesión, helmet, CSRF, rutas y manejo de errores |
 | `src/config/db.js` | Conexión a PostgreSQL con Sequelize, usando variables de entorno |
 | `src/routes/` | Rutas de la aplicación |
-| `src/middleware/` | Sesión, permisos y usuario simulado (temporal en la Fase 0) |
+| `src/routes/auth.js` | Login y logout |
+| `src/routes/auditoria.js` | Pantalla del registro de auditoría (solo SuperAdmin) |
+| `src/routes/eventos.js`, `compras.js` | Eventos y venta de entradas |
+| `src/middleware/` | `requiereSesion`, `cargarUsuario`, CSRF, `requierePermiso`, `requiereRol` y `errorHandler` |
 | `src/models/` | Modelos de Sequelize |
 | `src/utils/password.js` | Funciones `hashPassword` y `verificarPassword` (bcrypt, costo 12) |
 | `src/utils/auditoria.js` | Función `registrarAuditoria` |
 | `views/` | Plantillas EJS |
+| `public/css/` | Estilos (sin estilos en línea: la CSP solo permite recursos propios) |
 | `database/schema.sql` | Crea las tablas (borra y recrea, solo para desarrollo) |
 | `database/seed.sql` | Datos de ejemplo ficticios |
 | `database/generar_hashes.js` | Genera los hashes bcrypt de los usuarios de prueba |
@@ -72,10 +76,12 @@ Requisitos: Node.js, PostgreSQL y pgAdmin.
 1. Clonar el repositorio y cambiarse a `develop`.
 2. Instalar dependencias: `npm install`
 3. Copiar `.env.example` como `.env` y poner los datos de tu PostgreSQL.
-4. En pgAdmin, crear la base de datos con el mismo nombre que `DB_NAME`.
-5. En el Query Tool de esa base, ejecutar `database/schema.sql` y luego `database/seed.sql`.
-6. Arrancar: `npm run dev`
-7. Abrir http://localhost:3000
+4.   Generar un `SESSION_SECRET` propio:
+`node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
+5. En pgAdmin, crear la base de datos con el mismo nombre que `DB_NAME`.
+6. En el Query Tool de esa base, ejecutar `database/schema.sql` y luego `database/seed.sql`.
+7. Arrancar: `npm run dev`
+8. Abrir http://localhost:3000
 
 ### Variables de entorno
 
@@ -84,9 +90,11 @@ Requisitos: Node.js, PostgreSQL y pgAdmin.
 | `PORT` | Puerto de la aplicación |
 | `DB_HOST`, `DB_PORT` | Servidor y puerto de PostgreSQL |
 | `DB_NAME`, `DB_USER`, `DB_PASSWORD` | Base de datos y credenciales |
-| `SESSION_SECRET` | Secreto para firmar la sesión |
+| `SESSION_SECRET` | Secreto para firmar la sesión (texto largo y aleatorio, distinto en cada computadora) |
 | `SESSION_TIMEOUT_SECONDS` | Inactividad antes de cerrar la sesión (60) |
-| `USUARIO_SIMULADO_ROL` | Solo Fase 0: rol del usuario simulado |
+| `COOKIE_SECURE` | `true` solo cuando el sistema se publique con HTTPS |
+| `USE_HTTPS` | `true` para activar el encabezado HSTS cuando haya HTTPS |
+| `TZ` | Zona horaria (`America/Costa_Rica`) |
 
 ### Credenciales de prueba (datos ficticios)
 
