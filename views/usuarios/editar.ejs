@@ -1,0 +1,93 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= titulo %></title>
+</head>
+<body>
+    <h1><%= titulo %></h1>
+    <p><a href="/usuarios">Volver al listado</a></p>
+
+    <% if (error) { %>
+        <p role="alert"><%= error %></p>
+    <% } %>
+
+    <form action="/usuarios/<%= usuario.id %>/editar" method="POST">
+        <input
+            type="hidden"
+            name="_csrf"
+            value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>"
+        >
+
+        <label for="username">Nombre de usuario:</label>
+        <input
+            id="username"
+            name="username"
+            type="text"
+            minlength="1"
+            maxlength="50"
+            value="<%= usuario.username %>"
+            required
+        >
+
+        <label for="nombre">Nombre completo:</label>
+        <input
+            id="nombre"
+            name="nombre"
+            type="text"
+            minlength="1"
+            maxlength="100"
+            value="<%= usuario.nombre %>"
+            required
+        >
+
+        <label for="identificacion">Identificación:</label>
+        <input
+            id="identificacion"
+            name="identificacion"
+            type="text"
+            minlength="1"
+            maxlength="30"
+            value="<%= usuario.identificacion %>"
+            required
+        >
+
+        <label for="correo">Correo electrónico:</label>
+        <input
+            id="correo"
+            name="correo"
+            type="email"
+            maxlength="120"
+            value="<%= usuario.correo %>"
+            required
+        >
+
+        <label for="rol_id">Rol:</label>
+        <select id="rol_id" name="rol_id" required>
+            <% roles.forEach(rol => { %>
+                <option
+                    value="<%= rol.id %>"
+                    <%= Number(usuario.rol_id) === Number(rol.id) ? 'selected' : '' %>
+                >
+                    <%= rol.nombre %>
+                </option>
+            <% }) %>
+        </select>
+
+        <label for="password">Nueva contraseña (opcional):</label>
+        <input
+            id="password"
+            name="password"
+            type="password"
+            minlength="8"
+            maxlength="128"
+            autocomplete="new-password"
+            placeholder="Dejar en blanco para conservar la actual"
+        >
+
+        <button type="submit">Guardar cambios</button>
+    </form>
+</body>
+</html>
