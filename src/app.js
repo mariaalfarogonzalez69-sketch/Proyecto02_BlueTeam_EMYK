@@ -31,6 +31,7 @@ app.use(helmet({
     }
   },
   frameguard: { action: 'deny' },
+  noSniff: true,
   hsts: process.env.USE_HTTPS === 'true'
     ? { maxAge: 15552000 }
     : false
@@ -78,6 +79,7 @@ app.use('/', require('./routes/auditoria'));
 app.use('/', require('./routes/eventos'));
 app.use('/', require('./routes/compras'));
 app.use('/', require('./routes/reportes'));
+app.use('/', require('./routes/puerta'));
 
 // Administración de usuarios y roles (Persona 2).
 app.use('/', require('./routes/usuarios'));

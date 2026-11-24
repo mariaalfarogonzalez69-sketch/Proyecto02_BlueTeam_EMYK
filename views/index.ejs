@@ -18,6 +18,8 @@
         <a href="/reportes/ventas">Reporte de ventas</a>
         <% } %>
 
+        <% if (usuario.rol === 'Taquillero') { %><a href="/puerta">Validar entrada</a><% } %>
+        
         <% if (usuario.rol === 'SuperAdmin') { %><a href="/auditoria">Auditoría</a><% } %>
         <form class="salir" method="POST" action="/logout">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
