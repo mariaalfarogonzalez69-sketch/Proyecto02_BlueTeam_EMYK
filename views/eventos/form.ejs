@@ -2,18 +2,28 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Formulario de Evento</title>
+    <link rel="stylesheet" href="/css/eventos-compras.css" />
   </head>
-  <body>
+  <body class="ev">
+    <header class="barra">
+      <span class="marca">Entradas</span>
+      <nav><a href="/">Inicio</a><a href="/eventos">Eventos</a></nav>
+    </header>
+
+    <main class="contenedor angosto">
 
     <h1><%= evento && evento.id ? 'Editar evento' : 'Nuevo evento' %></h1>
 
         <% if (errores.length > 0) { %>
-        <ul>
+        <div class="alerta error">
+          <ul>
             <% errores.forEach(e => { %>
             <li><%= e %></li>
             <% }) %>
-        </ul>
+          </ul>
+        </div>
         <% } %>
 
         <%
@@ -26,7 +36,7 @@
             }
         %>
 
-        <form method="POST" action="<%= evento && evento.id ? '/eventos/' + evento.id + '/editar' : '/eventos' %>">
+        <form class="formulario tarjeta" method="POST" action="<%= evento && evento.id ? '/eventos/' + evento.id + '/editar' : '/eventos' %>">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
         <label>Código
@@ -48,6 +58,7 @@
             <input name="fecha" type="datetime-local" value="<%= paraInputFecha(evento ? evento.fecha : '') %>">
         </label>
 
+        <div class="dos-columnas">
         <label>Capacidad
             <input name="capacidad" type="number" min="1" max="100000" value="<%= evento ? evento.capacidad : '' %>">
         </label>
@@ -55,10 +66,13 @@
         <label>Precio
             <input name="precio" type="number" step="0.01" min="0" max="1000000" value="<%= evento ? evento.precio : '' %>">
         </label>
+        </div>
 
+        <div class="acciones">
         <button type="submit">Guardar</button>
-        <a href="/eventos">Cancelar</a>
+        <a class="boton secundario" href="/eventos">Cancelar</a>
+        </div>
         </form>
-
+    </main>
   </body>
 </html>
