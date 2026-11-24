@@ -52,7 +52,7 @@ const Evento = sequelize.define(
         notNull: { msg: "El nombre es obligatorio" },
         notEmpty: { msg: "El nombre es obligatorio" },
         len: {
-          args: [1, 120],
+          args: [0, 120],
           msg: "El nombre debe tener máximo 120 caracteres",
         },
       },
@@ -68,7 +68,7 @@ const Evento = sequelize.define(
         notNull: { msg: "El lugar es obligatorio" },
         notEmpty: { msg: "El lugar es obligatorio" },
         len: {
-          args: [1, 120],
+          args: [0, 120],
           msg: "El lugar debe tener máximo 120 caracteres",
         },
       },
