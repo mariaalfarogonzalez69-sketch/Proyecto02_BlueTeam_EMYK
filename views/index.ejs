@@ -14,12 +14,15 @@
         <a href="/">Inicio</a>
         <a href="/eventos">Eventos</a>
 
+        <a href="/usuarios">Usuarios</a>
+        <% if (usuario.rol === 'SuperAdmin') { %><a href="/roles">Roles</a><% } %>
+
         <% if (usuario.permisos && usuario.permisos.includes('ver_reportes')) { %>
         <a href="/reportes/ventas">Reporte de ventas</a>
         <% } %>
 
         <% if (usuario.rol === 'Taquillero') { %><a href="/puerta">Validar entrada</a><% } %>
-        
+
         <% if (usuario.rol === 'SuperAdmin') { %><a href="/auditoria">Auditoría</a><% } %>
         <form class="salir" method="POST" action="/logout">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
@@ -38,6 +41,10 @@
         </p>
         <div class="acciones">
           <a class="boton" href="/eventos">Ver eventos</a>
+          <a class="boton secundario" href="/usuarios">Gestión de usuarios</a>
+          <% if (usuario.rol === 'SuperAdmin') { %>
+            <a class="boton secundario" href="/roles">Gestión de roles</a>
+          <% } %>
           <% if (usuario.rol === 'SuperAdmin') { %>
             <a class="boton secundario" href="/auditoria">Registro de auditoría</a>
           <% } %>
