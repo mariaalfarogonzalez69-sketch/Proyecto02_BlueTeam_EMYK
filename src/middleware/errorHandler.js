@@ -1,10 +1,11 @@
+
 const errorHandler = (err, req, res, next) => {
-  // Si la respuesta ya comenzó, se deja que Express gestione el error.
+  // Si la respuesta ya comenzó, se delega el error a Express.
   if (res.headersSent) {
     return next(err);
   }
 
-  // Determinar el código de estado del error.
+  // Determinar el código de estado.
   const status = [403, 404, 500].includes(err.status || err.statusCode)
     ? err.status || err.statusCode
     : 500;
@@ -16,17 +17,23 @@ const errorHandler = (err, req, res, next) => {
     500: "errores/500",
   };
 
-  // Registrar el error en el servidor.
+  // Mensajes seguros para el usuario.
+  const mensajes = {
+    403: "No tiene autorización para realizar esta operación.",
+    404: "La página solicitada no existe o no está disponible.",
+    500: "Ha ocurrido un error interno del servidor.",
+  };
+
+  // Registrar información técnica únicamente en el servidor.
   console.error(
-    `[${err.name}] ${err.message} - ${(err.stack || "").split("\n")[1]?.trim()}`,
+    `[${err.name}] ${err.message} - ${
+      (err.stack || "").split("\n")[1]?.trim()
+    }`
   );
 
-  // Mostrar la página de error correspondiente.
+  // Mostrar la página correspondiente.
   res.status(status).render(paginas[status], {
-    mensaje:
-      status === 500
-        ? "Ha ocurrido un error interno del servidor."
-        : err.message,
+    mensaje: mensajes[status],
   });
 };
 

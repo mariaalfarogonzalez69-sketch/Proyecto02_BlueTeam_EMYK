@@ -1,7 +1,7 @@
 node_modules/
 .env
 # Reportes de pruebas y archivos del sistema
-reportes/
+/reportes/
 target/
 .DS_Store
 Thumbs.db

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Validar entrada</title>
+    <link rel="stylesheet" href="/css/eventos-compras.css" />
+  </head>
+  <body class="ev">
+    <header class="barra">
+      <span class="marca">Entradas</span>
+      <nav><a href="/">Inicio</a><a href="/eventos">Eventos</a><a href="/puerta">Validar entrada</a></nav>
+    </header>
+
+    <main class="contenedor angosto">
+      <h1>Validar entrada en la puerta</h1>
+
+      <% if (resultado) { %>
+        <div class="alerta <%= resultado.clave === 'valida' ? 'aviso' : 'error' %>">
+          <strong><%= resultado.texto %></strong>
+        </div>
+      <% } %>
+
+      <form class="formulario tarjeta" method="POST" action="/puerta/validar" autocomplete="off">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <label>Código de la entrada
+          <input name="codigo" required maxlength="64" pattern="[A-Za-z0-9_\-]+" title="Solo letras, números, guion y guion bajo" autofocus>
+        </label>
+        <button type="submit">Validar</button>
+      </form>
+    </main>
+  </body>
+</html>
