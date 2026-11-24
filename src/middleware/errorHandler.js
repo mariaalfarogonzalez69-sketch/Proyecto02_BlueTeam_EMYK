@@ -17,7 +17,9 @@ const errorHandler = (err, req, res, next) => {
   };
 
   // Registrar el error en el servidor.
-  console.error(err);
+  console.error(
+    `[${err.name}] ${err.message} - ${(err.stack || "").split("\n")[1]?.trim()}`,
+  );
 
   // Mostrar la página de error correspondiente.
   res.status(status).render(paginas[status], {
