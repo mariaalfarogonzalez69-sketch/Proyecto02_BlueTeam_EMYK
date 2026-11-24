@@ -30,15 +30,18 @@
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
         <label>Código
-            <input name="codigo" value="<%= evento ? evento.codigo : '' %>">
+            <input name="codigo" required maxlength="20" pattern="[A-Za-z0-9]+" title="Solo letras y números"
+                value="<%= evento ? evento.codigo : '' %>">
         </label>
 
         <label>Nombre
-            <input name="nombre" value="<%= evento ? evento.nombre : '' %>">
+            <input name="nombre" required maxlength="120"
+                value="<%= evento ? evento.nombre : '' %>">
         </label>
 
         <label>Lugar
-            <input name="lugar" value="<%= evento ? evento.lugar : '' %>">
+            <input name="lugar" required maxlength="120"
+                value="<%= evento ? evento.lugar : '' %>">
         </label>
 
         <label>Fecha

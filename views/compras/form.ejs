@@ -33,11 +33,13 @@
             </label>
 
             <label>Nombre del comprador
-                <input name="nombre" value="<%= compra.nombre || '' %>">
+                <input name="nombre" required maxlength="100"
+                value="<%= compra.nombre || '' %>">
             </label>
 
             <label>Correo
-                <input name="correo" type="email" value="<%= compra.correo || '' %>">
+                <input name="correo" required maxlength="120"
+                type="email" value="<%= compra.correo || '' %>">
             </label>
 
             <label>Teléfono (opcional: solo números)
