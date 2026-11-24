@@ -27,7 +27,7 @@
         %>
 
         <form method="POST" action="<%= evento && evento.id ? '/eventos/' + evento.id + '/editar' : '/eventos' %>">
-        <%# TODO: token CSRF %>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
         <label>Código
             <input name="codigo" value="<%= evento ? evento.codigo : '' %>">

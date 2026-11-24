@@ -29,7 +29,7 @@
 
         <% if (!evento.publicado) { %>
             <form method="POST" action="/eventos/<%= evento.id %>/publicar">
-            <%# TODO: token CSRF %>
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <button type="submit">Publicar</button>
             </form>
         <% } %>

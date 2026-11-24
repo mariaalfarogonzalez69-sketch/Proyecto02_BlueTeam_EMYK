@@ -14,7 +14,7 @@
         <p>¿Seguro que quieres eliminar el evento <strong><%= evento.nombre %></strong>?</p>
 
         <form method="POST" action="/eventos/<%= evento.id %>/eliminar">
-        <%# TODO: token CSRF %>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <button type="submit">Sí, eliminar</button>
         <a href="/eventos/<%= evento.id %>">Cancelar</a>
         </form>
