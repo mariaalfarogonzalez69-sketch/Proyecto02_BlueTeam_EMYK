@@ -77,6 +77,7 @@ app.use('/', require('./routes/index'));
 app.use('/', require('./routes/auditoria'));
 app.use('/', require('./routes/eventos'));
 app.use('/', require('./routes/compras'));
+app.use('/', require('./routes/reportes'));
 
 // Administración de usuarios y roles (Persona 2).
 app.use('/', require('./routes/usuarios'));

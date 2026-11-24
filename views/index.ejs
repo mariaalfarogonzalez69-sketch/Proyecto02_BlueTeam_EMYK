@@ -13,6 +13,11 @@
       <nav>
         <a href="/">Inicio</a>
         <a href="/eventos">Eventos</a>
+
+        <% if (usuario.permisos && usuario.permisos.includes('ver_reportes')) { %>
+        <a href="/reportes/ventas">Reporte de ventas</a>
+        <% } %>
+
         <% if (usuario.rol === 'SuperAdmin') { %><a href="/auditoria">Auditoría</a><% } %>
         <form class="salir" method="POST" action="/logout">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
