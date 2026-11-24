@@ -1,0 +1,53 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title><%= titulo %></title>
+</head>
+<body>
+    <h1><%= titulo %></h1>
+    <p><a href="/usuarios">Volver al listado</a></p>
+
+    <% if (error) { %>
+        <p role="alert"><%= error %></p>
+    <% } %>
+
+    <form action="/usuarios" method="POST">
+        <input type="hidden" name="_csrf" value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>">
+
+        <label for="username">Nombre de usuario:</label>
+        <input id="username" name="username" maxlength="50"
+            value="<%= datos.username || '' %>" required>
+
+        <label for="nombre">Nombre completo:</label>
+        <input id="nombre" name="nombre" maxlength="100"
+            value="<%= datos.nombre || '' %>" required>
+
+        <label for="correo">Correo:</label>
+        <input id="correo" name="correo" type="email" maxlength="120"
+            value="<%= datos.correo || '' %>" required>
+
+        <label for="identificacion">Identificación:</label>
+        <input id="identificacion" name="identificacion" maxlength="30"
+            value="<%= datos.identificacion || '' %>" required>
+
+        <label for="password">Contraseña:</label>
+        <input id="password" name="password" type="password"
+            minlength="8" maxlength="128" required>
+
+        <label for="rol_id">Rol:</label>
+        <select id="rol_id" name="rol_id" required>
+            <option value="">Seleccione un rol</option>
+            <% roles.forEach(rol => { %>
+                <option value="<%= rol.id %>"
+                    <%= String(datos.rol_id || '') === String(rol.id) ? 'selected' : '' %>>
+                    <%= rol.nombre %>
+                </option>
+            <% }) %>
+        </select>
+
+        <button type="submit">Crear usuario</button>
+    </form>
+</body>
+</html>

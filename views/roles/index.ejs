@@ -1,0 +1,59 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title><%= titulo %></title>
+</head>
+<body>
+    <h1><%= titulo %></h1>
+    <p><a href="/">Inicio</a></p>
+    <p><a href="/usuarios">Gestión de usuarios</a></p>
+    <p><a href="/roles/nuevo">Crear rol</a></p>
+
+    <% if (mensaje === 'creado') { %>
+        <p>Rol creado correctamente.</p>
+    <% } else if (mensaje === 'actualizado') { %>
+        <p>Rol actualizado correctamente.</p>
+    <% } else if (mensaje === 'eliminado') { %>
+        <p>Rol eliminado correctamente.</p>
+    <% } %>
+
+    <table border="1" cellpadding="8">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Rol</th>
+                <th>Permisos</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% roles.forEach(rol => { %>
+                <tr>
+                    <td><%= rol.id %></td>
+                    <td><%= rol.nombre %></td>
+                    <td>
+                        <%= rol.Permisos.length
+                            ? rol.Permisos.map(p => p.nombre).join(', ')
+                            : 'Sin permisos' %>
+                    </td>
+                    <td>
+                        <a href="/roles/<%= rol.id %>/editar">Editar</a>
+                        <% if (!['SuperAdmin', 'Auditor', 'Taquillero'].includes(rol.nombre)) { %>
+                            <form action="/roles/<%= rol.id %>/eliminar" method="POST">
+                                <input type="hidden" name="_csrf"
+                                    value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>">
+                                <button type="submit"
+                                    onclick="return confirm('¿Eliminar este rol?')">
+                                    Eliminar
+                                </button>
+                            </form>
+                        <% } %>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</body>
+</html>

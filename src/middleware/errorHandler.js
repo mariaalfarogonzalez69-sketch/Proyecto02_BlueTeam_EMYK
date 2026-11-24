@@ -11,9 +11,9 @@ const errorHandler = (err, req, res, next) => {
 
   // Seleccionar la página correspondiente.
   const paginas = {
-    403: "errors/403",
-    404: "errors/404",
-    500: "errors/500",
+    403: "errores/403",
+    404: "errores/404",
+    500: "errores/500",
   };
 
   // Registrar el error en el servidor.

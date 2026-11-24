@@ -1,0 +1,77 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title><%= titulo %></title>
+</head>
+<body>
+    <h1><%= titulo %></h1>
+
+    <p><a href="/">Inicio</a></p>
+
+    <% if (mensaje === 'creado') { %>
+        <p>Usuario creado correctamente.</p>
+    <% } else if (mensaje === 'actualizado') { %>
+        <p>Usuario actualizado correctamente.</p>
+    <% } else if (mensaje === 'eliminado') { %>
+        <p>Usuario eliminado correctamente.</p>
+    <% } %>
+
+    <% if (esSuperAdmin) { %>
+        <p><a href="/usuarios/nuevo">Crear usuario</a></p>
+    <% } %>
+
+    <table border="1" cellpadding="8">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Usuario</th>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Identificación</th>
+                <th>Rol</th>
+                <th>Permisos</th>
+                <th>Último inicio de sesión</th>
+                <% if (esSuperAdmin) { %>
+                    <th>Acciones</th>
+                <% } %>
+            </tr>
+        </thead>
+        <tbody>
+            <% usuarios.forEach(usuario => { %>
+                <tr>
+                    <td><%= usuario.id %></td>
+                    <td><%= usuario.username %></td>
+                    <td><%= usuario.nombre %></td>
+                    <td><%= usuario.correo %></td>
+                    <td><%= usuario.identificacion %></td>
+                    <td><%= usuario.Rol ? usuario.Rol.nombre : 'Sin rol' %></td>
+                    <td>
+                        <%= usuario.Rol && usuario.Rol.Permisos.length
+                            ? usuario.Rol.Permisos.map(p => p.nombre).join(', ')
+                            : 'Ninguno' %>
+                    </td>
+                    <td>
+                        <%= usuario.ultimo_login
+                            ? new Date(usuario.ultimo_login).toLocaleString('es-CR')
+                            : 'Nunca' %>
+                    </td>
+                    <% if (esSuperAdmin) { %>
+                        <td>
+                            <a href="/usuarios/<%= usuario.id %>/editar">Editar</a>
+                            <form action="/usuarios/<%= usuario.id %>/eliminar" method="POST">
+                                <input type="hidden" name="_csrf" value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>">
+                                <button type="submit"
+                                    onclick="return confirm('¿Está seguro de eliminar este usuario?')">
+                                    Eliminar
+                                </button>
+                            </form>
+                        </td>
+                    <% } %>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</body>
+</html>

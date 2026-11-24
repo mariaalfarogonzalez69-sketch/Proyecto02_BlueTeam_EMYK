@@ -1,0 +1,39 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title><%= titulo %></title>
+</head>
+<body>
+    <h1><%= titulo %></h1>
+    <p><a href="/roles">Volver a roles</a></p>
+
+    <% if (error) { %>
+        <p role="alert"><%= error %></p>
+    <% } %>
+
+    <form action="/roles" method="POST">
+        <input type="hidden" name="_csrf"
+            value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>">
+
+        <label for="nombre">Nombre del rol:</label>
+        <input id="nombre" name="nombre" maxlength="50"
+            value="<%= datos.nombre || '' %>" required>
+
+        <fieldset>
+            <legend>Permisos del rol</legend>
+            <% permisos.forEach(permiso => { %>
+                <label>
+                    <input type="checkbox" name="permisos"
+                        value="<%= permiso.nombre %>">
+                    <%= permiso.nombre %>
+                </label>
+                <br>
+            <% }) %>
+        </fieldset>
+
+        <button type="submit">Crear rol</button>
+    </form>
+</body>
+</html>
