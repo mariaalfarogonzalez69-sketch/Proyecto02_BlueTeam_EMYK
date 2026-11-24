@@ -1,7 +1,30 @@
-// VERSIÓN DE MENTIRA (Fase 0): deja pasar todo.
-// La real (usuarios-roles) responde 403 si el rol no tiene el permiso.
-// Uso: router.post('/eventos', requierePermiso('crear'), handler)
-// Permisos: 'crear' | 'editar' | 'borrar' | 'ver_reportes'
+﻿// Encargada: Katlyn Fernández Ramos
+
+const { registrarAuditoria } = require('../utils/auditoria');
+
 module.exports = function requierePermiso(permiso) {
-  return (req, res, next) => next();
+    return async (req, res, next) => {
+        const usuario = req.usuario;
+
+        const tienePermiso =
+            usuario &&
+            Array.isArray(usuario.permisos) &&
+            usuario.permisos.includes(permiso);
+
+        if (!tienePermiso) {
+            try {
+                await registrarAuditoria(
+                    req,
+                    'acceso_403',
+                    `Permiso requerido: ${permiso}`
+                );
+            } catch (error) {
+                console.error('No se pudo registrar el acceso denegado.');
+            }
+
+            return res.status(403).render('errores/403');
+        }
+
+        return next();
+    };
 };
