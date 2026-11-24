@@ -2,37 +2,63 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Detalle del Evento</title>
+    <link rel="stylesheet" href="/css/eventos-compras.css" />
   </head>
-  <body>
+  <body class="ev">
+    <header class="barra">
+      <span class="marca">Entradas</span>
+      <nav><a href="/">Inicio</a><a href="/eventos">Eventos</a></nav>
+    </header>
 
-    <h1>Detalle del evento </h1>
+    <main class="contenedor">
+      <h1>Detalle del evento</h1>
 
-        <p><strong>Código:</strong> <%= evento.codigo %></p>
-        <p><strong>Nombre:</strong> <%= evento.nombre %></p>
-        <p><strong>Lugar:</strong> <%= evento.lugar %></p>
-        <p><strong>Fecha:</strong> <%= evento.fecha.toLocaleString('es-CR', { timeZone: 'America/Costa_Rica' }) %></p>
-        <p><strong>Capacidad:</strong> <%= evento.capacidad %></p>
-        <p><strong>Entradas vendidas:</strong> <%= evento.entradas_vendidas %></p>
-        <p><strong>Precio:</strong> ₡<%= evento.precio %></p>
-        <p><strong>Publicado:</strong> <%= evento.publicado ? 'Sí' : 'No' %></p>
+      <article class="boleto">
+        <div class="boleto-cuerpo">
+          <h2 class="titulo-evento"><%= evento.nombre %></h2>
+          <dl>
+            <dt>Código</dt><dd><span class="codigo"><%= evento.codigo %></span></dd>
+            <dt>Nombre</dt><dd><%= evento.nombre %></dd>
+            <dt>Lugar</dt><dd><%= evento.lugar %></dd>
+            <dt>Fecha</dt><dd><%= evento.fecha.toLocaleString('es-CR', { timeZone: 'America/Costa_Rica' }) %></dd>
+            <dt>Capacidad</dt><dd><%= evento.capacidad %></dd>
+            <dt>Entradas vendidas</dt>
+            <dd class="ocupacion">
+              <span><%= evento.entradas_vendidas %></span>
+              <progress max="<%= evento.capacidad %>" value="<%= evento.entradas_vendidas %>"></progress>
+              <small><%= evento.capacidad - evento.entradas_vendidas %> disponibles</small>
+            </dd>
+            <dt>Publicado</dt><dd><span class="badge <%= evento.publicado ? 'ok' : 'off' %>"><%= evento.publicado ? 'Sí' : 'No' %></span></dd>
+          </dl>
+        </div>
+        <div class="boleto-talon">
+          <span class="talon-etiqueta">Precio</span>
+          <span class="talon-precio">₡<%= evento.precio %></span>
+          <span class="talon-codigo"><%= evento.codigo %></span>
+        </div>
+      </article>
 
-        <a href="/eventos">Volver a la lista</a>
+      <div class="acciones">
+        <a class="boton secundario" href="/eventos">Volver a la lista</a>
 
         <% if (usuario.rol === 'Taquillero') { %>
-          <a href="/eventos/<%= evento.id %>/editar">Editar</a>
-          <a href="/eventos/<%= evento.id %>/eliminar">Eliminar</a>
+          <a class="boton secundario" href="/eventos/<%= evento.id %>/editar">Editar</a>
+          <a class="boton secundario" href="/eventos/<%= evento.id %>/eliminar">Eliminar</a>
           <% if (evento.publicado) { %>
-            <a href="/eventos/<%= evento.id %>/compra">Vender entradas</a>
+            <a class="boton" href="/eventos/<%= evento.id %>/compra">Vender entradas</a>
           <% } %>
-          <a href="/eventos/<%= evento.id %>/compras">Ver compras</a>
+          <a class="boton secundario" href="/eventos/<%= evento.id %>/compras">Ver compras</a>
 
-        <% if (!evento.publicado) { %>
+          <% if (!evento.publicado) { %>
             <form method="POST" action="/eventos/<%= evento.id %>/publicar">
-            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-            <button type="submit">Publicar</button>
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <button type="submit">Publicar</button>
             </form>
+          <% } %>
         <% } %>
-        <% } %>
+      </div>
+    </main>
   </body>
 </html>

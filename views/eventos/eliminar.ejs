@@ -2,22 +2,34 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Eliminar Evento</title>
+    <link rel="stylesheet" href="/css/eventos-compras.css" />
   </head>
-  <body>
-    <h1>Eliminar Evento</h1>
+  <body class="ev">
+    <header class="barra">
+      <span class="marca">Entradas</span>
+      <nav><a href="/">Inicio</a><a href="/eventos">Eventos</a></nav>
+    </header>
 
+    <main class="contenedor angosto">
+      <h1>Eliminar Evento</h1>
+
+      <div class="tarjeta">
         <% if (error) { %>
-        <p><%= error %></p>
+          <p class="alerta error"><%= error %></p>
         <% } %>
 
         <p>¿Seguro que quieres eliminar el evento <strong><%= evento.nombre %></strong>?</p>
 
         <form method="POST" action="/eventos/<%= evento.id %>/eliminar">
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-        <button type="submit">Sí, eliminar</button>
-        <a href="/eventos/<%= evento.id %>">Cancelar</a>
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <div class="acciones">
+            <button class="peligro" type="submit">Sí, eliminar</button>
+            <a class="boton secundario" href="/eventos/<%= evento.id %>">Cancelar</a>
+          </div>
         </form>
-
+      </div>
+    </main>
   </body>
 </html>

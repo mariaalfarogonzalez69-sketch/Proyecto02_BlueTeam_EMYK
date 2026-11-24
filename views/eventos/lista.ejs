@@ -2,40 +2,55 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Lista de Eventos</title>
+    <link rel="stylesheet" href="/css/eventos-compras.css" />
   </head>
-  <body>
-    <h1>Eventos</h1>
-    <p><a href="/">Volver al inicio</a></p>
+  <body class="ev">
+    <header class="barra">
+      <span class="marca">Entradas</span>
+      <nav><a href="/">Inicio</a><a href="/eventos">Eventos</a></nav>
+    </header>
 
-    <form method="GET" action="/eventos">
-      <input name="q" value="<%= q %>" placeholder="Buscar por nombre">
-      <button type="submit">Buscar</button>
-      <% if (q) { %>
-        <a href="/eventos">Limpiar búsqueda</a>
-      <% } %>
-    </form>
+    <main class="contenedor">
+      <h1>Eventos</h1>
 
-    <% if (usuario.rol === 'Taquillero') { %>
-      <a href="/eventos/nuevo">Nuevo evento</a>
-    <% } %>
+      <div class="barra-herramientas">
+        <form class="buscador" method="GET" action="/eventos">
+          <input name="q" value="<%= q %>" placeholder="Buscar por nombre">
+          <button type="submit">Buscar</button>
+          <% if (q) { %>
+            <a href="/eventos">Limpiar búsqueda</a>
+          <% } %>
+        </form>
 
-    <table>
-      <thead>
-        <tr><th>Código</th><th>Nombre</th><th>Lugar</th><th>Fecha</th><th>Publicado</th><th></th></tr>
-      </thead>
-      <tbody>
-        <% eventos.forEach(e => { %>
-          <tr>
-            <td><%= e.codigo %></td>
-            <td><%= e.nombre %></td>
-            <td><%= e.lugar %></td>
-            <td><%= e.fecha.toLocaleString('es-CR', { timeZone: 'America/Costa_Rica' }) %></td>
-            <td><%= e.publicado ? 'Sí' : 'No' %></td>
-            <td><a href="/eventos/<%= e.id %>">Ver detalle</a></td>
-          </tr>
-        <% }) %>
-      </tbody>
-    </table>
+        <% if (usuario.rol === 'Taquillero') { %>
+          <a class="boton" href="/eventos/nuevo">Nuevo evento</a>
+        <% } %>
+      </div>
+
+      <div class="tabla-envoltura">
+        <table class="apilable">
+          <thead>
+            <tr><th>Código</th><th>Nombre</th><th>Lugar</th><th>Fecha</th><th>Publicado</th><th></th></tr>
+          </thead>
+          <tbody>
+            <% eventos.forEach(e => { %>
+              <tr>
+                <td data-label="Código"><span class="codigo"><%= e.codigo %></span></td>
+                <td data-label="Nombre"><strong><%= e.nombre %></strong></td>
+                <td data-label="Lugar"><%= e.lugar %></td>
+                <td data-label="Fecha"><%= e.fecha.toLocaleString('es-CR', { timeZone: 'America/Costa_Rica' }) %></td>
+                <td data-label="Publicado"><span class="badge <%= e.publicado ? 'ok' : 'off' %>"><%= e.publicado ? 'Sí' : 'No' %></span></td>
+                <td data-label=""><a href="/eventos/<%= e.id %>">Ver detalle</a></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+        <% if (eventos.length === 0) { %>
+          <p class="vacio">No hay eventos que mostrar.</p>
+        <% } %>
+      </div>
+    </main>
   </body>
 </html>

@@ -1,0 +1,717 @@
+/* ==========================================================================
+   eventos-compras.css  ·  Estilo de las pantallas de EVENTOS y COMPRAS
+   Dominio 7: venta de entradas. Tema "noche de concierto".
+
+   - Todo está dentro de body.ev, así que no afecta a index, login ni auditoría.
+   - Sin fuentes externas ni estilos en línea: la CSP solo permite 'self'.
+   - Para cambiar los colores del sistema basta con editar las variables de :root.
+   ========================================================================== */
+
+:root {
+  --noche: #1a1433;
+  --noche-2: #2b2057;
+  --acento: #ff7a45;
+  --acento-oscuro: #e65f2b;
+  --dorado: #f6c453;
+  --fondo: #f4f1fb;
+  --tarjeta: #ffffff;
+  --texto: #1f1b33;
+  --suave: #6a6584;
+  --linea: #e3def2;
+  --ok: #17895e;
+  --ok-fondo: #dcf5ea;
+  --error: #c93a46;
+  --error-fondo: #fde8ea;
+  --aviso-fondo: #fff4d6;
+  --aviso: #8a5a00;
+  --radio: 14px;
+  --sombra: 0 10px 30px -12px rgba(26, 20, 51, 0.35);
+}
+
+/* ---------- Base ---------- */
+body.ev {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--fondo);
+  color: var(--texto);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+body.ev *,
+body.ev *::before,
+body.ev *::after {
+  box-sizing: border-box;
+}
+
+/* ---------- Barra superior ---------- */
+body.ev .barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem clamp(1rem, 4vw, 2.5rem);
+  color: #fff;
+  background:
+    radial-gradient(600px 120px at 85% -40%, rgba(255, 122, 69, 0.45), transparent 70%),
+    linear-gradient(120deg, var(--noche), var(--noche-2));
+  border-bottom: 3px solid var(--dorado);
+}
+
+body.ev .marca {
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.95rem;
+}
+
+body.ev .marca::before {
+  content: "";
+  display: inline-block;
+  width: 0.9em;
+  height: 0.9em;
+  margin-right: 0.55em;
+  vertical-align: -0.1em;
+  background: var(--dorado);
+  border-radius: 3px;
+  transform: rotate(45deg);
+}
+
+body.ev .barra nav {
+  display: flex;
+  gap: 1.1rem;
+}
+
+body.ev .barra nav a {
+  color: #e9e4ff;
+  text-decoration: none;
+  font-size: 0.92rem;
+  padding-bottom: 2px;
+  border-bottom: 2px solid transparent;
+}
+
+body.ev .barra nav a:hover {
+  color: #fff;
+  border-bottom-color: var(--acento);
+}
+
+/* ---------- Contenedor y títulos ---------- */
+body.ev .contenedor {
+  width: min(100% - 2rem, 980px);
+  margin: 2rem auto 3rem;
+}
+
+body.ev .contenedor.angosto {
+  width: min(100% - 2rem, 640px);
+}
+
+body.ev h1 {
+  margin: 0 0 1.25rem;
+  font-size: clamp(1.5rem, 3.4vw, 2.1rem);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+body.ev h1::after {
+  content: "";
+  display: block;
+  width: 56px;
+  height: 4px;
+  margin-top: 0.55rem;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--acento), var(--dorado));
+}
+
+body.ev h2 {
+  margin: 0 0 0.8rem;
+  font-size: 1.1rem;
+  color: var(--noche-2);
+}
+
+body.ev p {
+  margin: 0 0 0.75rem;
+}
+
+/* ---------- Enlaces y botones ---------- */
+body.ev a {
+  color: var(--noche-2);
+  text-underline-offset: 3px;
+}
+
+body.ev a:hover {
+  color: var(--acento-oscuro);
+}
+
+body.ev .boton,
+body.ev button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.62rem 1.1rem;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-decoration: none;
+  cursor: pointer;
+  color: #fff;
+  background: linear-gradient(135deg, var(--acento), var(--acento-oscuro));
+  box-shadow: 0 6px 14px -8px rgba(230, 95, 43, 0.9);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+}
+
+body.ev .boton:hover,
+body.ev button:hover {
+  color: #fff;
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+}
+
+body.ev .boton:active,
+body.ev button:active {
+  transform: translateY(0);
+}
+
+body.ev .boton.secundario {
+  color: var(--noche-2);
+  background: transparent;
+  border-color: var(--linea);
+  box-shadow: none;
+}
+
+body.ev .boton.secundario:hover {
+  color: var(--noche-2);
+  border-color: var(--noche-2);
+  background: #fff;
+}
+
+body.ev .boton.peligro,
+body.ev button.peligro {
+  background: linear-gradient(135deg, #dc4a56, var(--error));
+  box-shadow: 0 6px 14px -8px rgba(201, 58, 70, 0.9);
+}
+
+body.ev :focus-visible {
+  outline: 3px solid var(--dorado);
+  outline-offset: 2px;
+}
+
+/* Fila de acciones (botones y enlaces juntos) */
+body.ev .acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 1.25rem 0 0;
+}
+
+body.ev .acciones form {
+  display: contents;
+}
+
+body.ev .barra-herramientas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1.1rem;
+}
+
+/* ---------- Tarjetas ---------- */
+body.ev .tarjeta {
+  background: var(--tarjeta);
+  border: 1px solid var(--linea);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+  padding: clamp(1rem, 3vw, 1.75rem);
+  margin-bottom: 1.25rem;
+}
+
+/* ---------- Alertas ---------- */
+body.ev .alerta {
+  margin: 0 0 1.1rem;
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  border-left: 5px solid;
+  font-weight: 500;
+}
+
+body.ev .alerta ul {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+body.ev .alerta.error {
+  color: #7d1d27;
+  background: var(--error-fondo);
+  border-color: var(--error);
+}
+
+body.ev .alerta.aviso {
+  color: var(--aviso);
+  background: var(--aviso-fondo);
+  border-color: var(--dorado);
+}
+
+/* ---------- Buscador ---------- */
+body.ev .buscador {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1 1 320px;
+}
+
+body.ev .buscador input {
+  flex: 1 1 200px;
+  max-width: 380px;
+}
+
+/* ---------- Formularios ---------- */
+body.ev form.formulario {
+  display: grid;
+  gap: 1rem;
+}
+
+body.ev label {
+  display: grid;
+  gap: 0.35rem;
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--noche-2);
+}
+
+body.ev input {
+  width: 100%;
+  padding: 0.62rem 0.8rem;
+  font: inherit;
+  font-weight: 400;
+  color: var(--texto);
+  background: #fff;
+  border: 2px solid var(--linea);
+  border-radius: 10px;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+body.ev input:hover {
+  border-color: #cfc7ea;
+}
+
+body.ev input:focus {
+  outline: none;
+  border-color: var(--acento);
+  box-shadow: 0 0 0 4px rgba(255, 122, 69, 0.18);
+}
+
+body.ev input:user-invalid {
+  border-color: var(--error);
+}
+
+body.ev .dos-columnas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+/* ---------- Tablas ---------- */
+body.ev .tabla-envoltura {
+  background: var(--tarjeta);
+  border: 1px solid var(--linea);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+  overflow: hidden;
+}
+
+body.ev table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+body.ev th {
+  padding: 0.85rem 1rem;
+  text-align: left;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #e9e4ff;
+  background: var(--noche-2);
+  white-space: nowrap;
+}
+
+body.ev td {
+  padding: 0.8rem 1rem;
+  border-top: 1px solid var(--linea);
+  vertical-align: middle;
+}
+
+body.ev tbody tr:nth-child(even),
+body.ev table > tr:nth-child(even) td {
+  background: #faf8ff;
+}
+
+body.ev tbody tr:hover td {
+  background: #f1ecff;
+}
+
+/* Fechas y enlaces de acción en una sola línea (en pantallas grandes) */
+body.ev td[data-label="Fecha"],
+body.ev td[data-label="Fecha y Hora"],
+body.ev td[data-label=""] a {
+  white-space: nowrap;
+}
+
+body.ev td.num,
+body.ev th.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+body.ev .codigo {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+body.ev .vacio {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: var(--suave);
+}
+
+/* ---------- Insignias de estado ---------- */
+body.ev .badge {
+  display: inline-block;
+  padding: 0.15rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+body.ev .badge.ok {
+  color: var(--ok);
+  background: var(--ok-fondo);
+}
+
+body.ev .badge.off {
+  color: #6a6584;
+  background: #ece9f5;
+}
+
+body.ev .badge.malo {
+  color: var(--error);
+  background: var(--error-fondo);
+}
+
+/* ---------- Boleto (detalle del evento) ---------- */
+body.ev .boleto {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 230px;
+  background: var(--tarjeta);
+  border: 1px solid var(--linea);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+  margin-bottom: 1.25rem;
+}
+
+body.ev .boleto-cuerpo {
+  padding: clamp(1.1rem, 3vw, 1.8rem);
+}
+
+body.ev .boleto-talon {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 1.5rem 1.25rem;
+  text-align: center;
+  color: #fff;
+  background: linear-gradient(160deg, var(--noche-2), var(--noche));
+  border-left: 3px dashed rgba(255, 255, 255, 0.35);
+  border-radius: 0 var(--radio) var(--radio) 0;
+}
+
+/* Muescas del boleto */
+body.ev .boleto-talon::before,
+body.ev .boleto-talon::after {
+  content: "";
+  position: absolute;
+  left: -14px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--fondo);
+  box-shadow: inset 0 0 0 1px var(--linea);
+  clip-path: inset(0 0 0 50%);
+}
+
+body.ev .boleto-talon::before {
+  top: -13px;
+}
+
+body.ev .boleto-talon::after {
+  bottom: -13px;
+}
+
+body.ev .talon-etiqueta {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dorado);
+}
+
+body.ev .talon-precio {
+  font-size: 1.9rem;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+body.ev .talon-codigo {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  letter-spacing: 0.1em;
+  font-size: 0.95rem;
+  color: #e9e4ff;
+}
+
+body.ev .boleto dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.55rem 1.25rem;
+  margin: 0;
+}
+
+body.ev .boleto dt {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--suave);
+  align-self: center;
+}
+
+body.ev .boleto dd {
+  margin: 0;
+  font-weight: 500;
+}
+
+body.ev .boleto h2.titulo-evento {
+  margin: 0 0 1rem;
+  font-size: 1.35rem;
+  color: var(--texto);
+}
+
+body.ev .ocupacion {
+  display: grid;
+  gap: 0.3rem;
+}
+
+body.ev progress {
+  width: 100%;
+  height: 10px;
+  border: 0;
+  border-radius: 999px;
+  overflow: hidden;
+  background: #ece9f5;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+body.ev progress::-webkit-progress-bar {
+  background: #ece9f5;
+}
+
+body.ev progress::-webkit-progress-value {
+  background: linear-gradient(90deg, var(--acento), var(--dorado));
+  border-radius: 999px;
+}
+
+body.ev progress::-moz-progress-bar {
+  background: linear-gradient(90deg, var(--acento), var(--dorado));
+  border-radius: 999px;
+}
+
+body.ev .ocupacion small {
+  color: var(--suave);
+}
+
+/* ---------- Resumen del evento en la compra ---------- */
+body.ev .resumen {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+body.ev .dato {
+  padding: 0.8rem 1rem;
+  background: var(--tarjeta);
+  border: 1px solid var(--linea);
+  border-left: 4px solid var(--acento);
+  border-radius: 10px;
+}
+
+body.ev .dato span {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--suave);
+}
+
+body.ev .dato strong {
+  font-size: 1.05rem;
+}
+
+/* ---------- Datos clave de una compra ---------- */
+body.ev .ficha {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.5rem 1.5rem;
+  margin: 0;
+}
+
+body.ev .ficha dt {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--suave);
+  align-self: center;
+}
+
+body.ev .ficha dd {
+  margin: 0;
+}
+
+body.ev .entrega {
+  margin-bottom: 1rem;
+}
+
+/* ---------- Pantallas pequeñas ---------- */
+@media (max-width: 720px) {
+  body.ev .barra {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+  }
+
+  body.ev .dos-columnas {
+    grid-template-columns: 1fr;
+  }
+
+  /* Boleto en vertical: el talón pasa abajo y las muescas a los lados */
+  body.ev .boleto {
+    grid-template-columns: 1fr;
+  }
+
+  body.ev .boleto-talon {
+    border-left: 0;
+    border-top: 3px dashed rgba(255, 255, 255, 0.35);
+    border-radius: 0 0 var(--radio) var(--radio);
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    text-align: left;
+  }
+
+  body.ev .boleto-talon::before,
+  body.ev .boleto-talon::after {
+    top: -13px;
+    bottom: auto;
+    clip-path: inset(50% 0 0 0);
+  }
+
+  body.ev .boleto-talon::before {
+    left: -13px;
+  }
+
+  body.ev .boleto-talon::after {
+    left: auto;
+    right: -13px;
+  }
+
+  /* Tablas como tarjetas apiladas */
+  body.ev .apilable thead,
+  body.ev .apilable tr:has(> th) {
+    display: none;
+  }
+
+  body.ev .apilable,
+  body.ev .apilable tbody,
+  body.ev .apilable tr,
+  body.ev .apilable td {
+    display: block;
+    width: 100%;
+  }
+
+  body.ev .apilable tr {
+    padding: 0.6rem 0;
+    border-top: 6px solid var(--fondo);
+  }
+
+  body.ev .apilable td {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.35rem 1rem;
+    border: 0;
+    text-align: right;
+  }
+
+  body.ev .apilable td::before {
+    content: attr(data-label);
+    flex: none;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--suave);
+    text-align: left;
+  }
+
+  body.ev .apilable td[data-label="Fecha"],
+  body.ev .apilable td[data-label="Fecha y Hora"] {
+    white-space: normal;
+  }
+
+  body.ev .apilable td:empty,
+  body.ev .apilable td[data-label=""] {
+    justify-content: flex-end;
+  }
+
+  body.ev .apilable td[data-label=""]::before {
+    content: none;
+  }
+
+  body.ev .ficha,
+  body.ev .boleto dl {
+    grid-template-columns: 1fr;
+    gap: 0.1rem;
+  }
+
+  body.ev .boleto dd,
+  body.ev .ficha dd {
+    margin-bottom: 0.6rem;
+  }
+
+  body.ev .acciones .boton,
+  body.ev .acciones button {
+    flex: 1 1 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.ev * {
+    transition: none !important;
+  }
+}
