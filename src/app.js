@@ -76,11 +76,17 @@ app.use("/", require("./routes/eventos"));
 app.use("/", require("./routes/compras"));
 
 // Respuesta limpia cuando falla el token CSRF (sin rutas de archivos ni trazas)
+// Si falla el token CSRF: sin sesión (venció) se vuelve al login;
+// con sesión, 403 limpio y registro en auditoría (sin rutas de archivos ni trazas).
 app.use(async (err, req, res, next) => {
   if (
     err &&
     (err.code === "EBADCSRFTOKEN" || /csrf/i.test(err.message || ""))
   ) {
+    // Sesión vencida: no hay usuario, así que se vuelve al login
+    if (!req.usuario) {
+      return res.redirect("/login");
+    }
     await registrarAuditoria(
       req,
       "acceso_403",
