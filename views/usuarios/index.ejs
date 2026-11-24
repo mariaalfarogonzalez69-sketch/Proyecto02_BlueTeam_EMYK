@@ -60,12 +60,9 @@
                     <% if (esSuperAdmin) { %>
                         <td>
                             <a href="/usuarios/<%= usuario.id %>/editar">Editar</a>
-                            <form action="/usuarios/<%= usuario.id %>/eliminar" method="POST">
+                            <form action="/usuarios/<%= usuario.id %>/eliminar" method="POST" data-confirm="¿Está seguro de eliminar este usuario?">
                                 <input type="hidden" name="_csrf" value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>">
-                                <button type="submit"
-                                    onclick="return confirm('¿Está seguro de eliminar este usuario?')">
-                                    Eliminar
-                                </button>
+                                <button type="submit">Eliminar</button>
                             </form>
                         </td>
                     <% } %>
@@ -73,5 +70,6 @@
             <% }) %>
         </tbody>
     </table>
+    <script src="/js/confirmar.js"></script>
 </body>
 </html>
