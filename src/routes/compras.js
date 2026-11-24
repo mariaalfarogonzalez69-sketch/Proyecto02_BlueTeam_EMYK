@@ -18,9 +18,9 @@ const ErrorNegocio = require("../utils/ErrorNegocio");
 
 router.param("id", (req, res, next, valor) => {
   if (parsearId(valor) === null) {
-    return res.status(404).send("No encontrado");
+    return noEncontrado(next);
   }
-  next(); // si es válido, sigue a la ruta normal
+  next();
 });
 
 // Todas las rutas exigen sesión.
@@ -93,6 +93,12 @@ async function cargarDetalle(req, id) {
   };
 }
 
+function noEncontrado(next) {
+  const e = new Error("No encontrado");
+  e.status = 404;
+  return next(e);
+}
+
 // ---------- VENDER (permiso crear + rol Taquillero) ----------
 
 // Formulario de venta: GET /eventos/:id/compra
@@ -102,9 +108,9 @@ router.get(
   requiereSesion,
   requierePermiso("crear"),
   requiereRol("Taquillero"),
-  async (req, res) => {
+  async (req, res, next) => {
     const evento = await Evento.findByPk(req.params.id);
-    if (!evento) return res.status(404).send("Evento no encontrado");
+    if (!evento) return noEncontrado(next);
 
     const noDisponible = motivoNoDisponible(evento);
     res.status(noDisponible ? 409 : 200).render("compras/form", {
@@ -126,7 +132,7 @@ router.post(
   requiereSesion,
   requierePermiso("crear"),
   requiereRol("Taquillero"),
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       // 1) Validar el formato de la cantidad. No toca la base de datos,
       //    así que va ANTES de abrir la transacción.
@@ -218,7 +224,7 @@ router.post(
         err.name === "SequelizeValidationError"
       ) {
         const evento = await Evento.findByPk(req.params.id);
-        if (!evento) return res.status(404).send("Evento no encontrado");
+        if (!evento) return noEncontrado(next);
         const errores =
           err instanceof ErrorNegocio
             ? [err.message]
@@ -240,9 +246,9 @@ router.get(
   "/eventos/:id/compras",
   requiereSesion,
   requierePermiso("crear"),
-  async (req, res) => {
+  async (req, res, next) => {
     const evento = await Evento.findByPk(req.params.id);
-    if (!evento) return res.status(404).send("Evento no encontrado");
+    if (!evento) return noEncontrado(next);
 
     const filas = await Compra.findAll({
       where: { evento_id: evento.id },
@@ -270,9 +276,9 @@ router.get(
   "/compra/:id",
   requiereSesion,
   requierePermiso("crear"),
-  async (req, res) => {
+  async (req, res, next) => {
     const datos = await cargarDetalle(req, req.params.id);
-    if (!datos) return res.status(404).send("Compra no encontrada");
+    if (!datos) return noEncontrado(next);
     res.render("compras/detalle", { ...datos, errores: [] });
   },
 );
@@ -293,9 +299,9 @@ router.post(
   requiereSesion,
   requierePermiso("editar"),
   requiereRol("Taquillero"),
-  async (req, res) => {
+  async (req, res, next) => {
     const compra = await Compra.findByPk(req.params.id);
-    if (!compra) return res.status(404).send("Compra no encontrada");
+    if (!compra) return noEncontrado(next);
 
     try {
       await sequelize.transaction(async (t) => {

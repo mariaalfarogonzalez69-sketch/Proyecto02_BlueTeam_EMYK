@@ -9,11 +9,21 @@ const requiereRol = require("../middleware/requiereRol");
 const { parsearId } = require("../utils/validarId");
 const { mensajeFechaEvento, aFechaCR } = require("../utils/validarFecha");
 
+// ---------- Funciones de apoyo ----------
+
+function noEncontrado(next) {
+  const e = new Error("No encontrado");
+  e.status = 404;
+  return next(e);
+}
+
+// ----------------------------------------
+
 router.param("id", (req, res, next, valor) => {
   if (parsearId(valor) === null) {
-    return res.status(404).send("No encontrado");
+    return noEncontrado(next);
   }
-  next(); // si es válido, sigue a la ruta normal
+  next();
 });
 
 // Todas las rutas exigen sesión.
@@ -26,7 +36,7 @@ router.param("id", (req, res, next, valor) => {
 
 // Listar: GET /eventos
 // Buscar: GET /eventos?q=evento
-router.get("/eventos", requiereSesion, async (req, res) => {
+router.get("/eventos", requiereSesion, async (req, res, next) => {
   // q debe ser un texto. Con ?q=a&q=b llega un arreglo y .trim() fallaría,
   // así que cualquier cosa que no sea texto se trata como búsqueda vacía.
   // El largo máximo (120) es el mismo del nombre del evento.
@@ -58,7 +68,7 @@ router.post(
   requiereSesion,
   requierePermiso("crear"),
   requiereRol("Taquillero"),
-  async (req, res) => {
+  async (req, res, next) => {
     // Regla: al crear, la fecha debe ser válida y futura
     const errorFecha = mensajeFechaEvento(req.body.fecha);
     if (errorFecha) {
@@ -99,9 +109,9 @@ router.post(
 // ---------- VER DETALLE (solo sesión) ----------
 
 // Ver detalle: GET /eventos/:id
-router.get("/eventos/:id", requiereSesion, async (req, res) => {
+router.get("/eventos/:id", requiereSesion, async (req, res, next) => {
   const evento = await Evento.findByPk(req.params.id);
-  if (!evento) return res.status(404).send("Evento no encontrado");
+  if (!evento) return noEncontrado(next);
   res.render("eventos/detalle", { evento });
 });
 
@@ -113,9 +123,9 @@ router.get(
   requiereSesion,
   requierePermiso("editar"),
   requiereRol("Taquillero"),
-  async (req, res) => {
+  async (req, res, next) => {
     const evento = await Evento.findByPk(req.params.id);
-    if (!evento) return res.status(404).send("Evento no encontrado");
+    if (!evento) return noEncontrado(next);
     res.render("eventos/form", { evento, errores: [] });
   },
 );
@@ -126,9 +136,9 @@ router.post(
   requiereSesion,
   requierePermiso("editar"),
   requiereRol("Taquillero"),
-  async (req, res) => {
+  async (req, res, next) => {
     const evento = await Evento.findByPk(req.params.id);
-    if (!evento) return res.status(404).send("Evento no encontrado");
+    if (!evento) return noEncontrado(next);
 
     // La regla "fecha futura" solo se exige si la fecha CAMBIÓ: así un evento
     // que ya pasó se puede editar sin tocar su fecha.
@@ -182,9 +192,9 @@ router.get(
   requiereSesion,
   requierePermiso("borrar"),
   requiereRol("Taquillero"),
-  async (req, res) => {
+  async (req, res, next) => {
     const evento = await Evento.findByPk(req.params.id);
-    if (!evento) return res.status(404).send("Evento no encontrado");
+    if (!evento) return noEncontrado(next);
     res.render("eventos/eliminar", { evento, error: null });
   },
 );
@@ -195,9 +205,9 @@ router.post(
   requiereSesion,
   requierePermiso("borrar"),
   requiereRol("Taquillero"),
-  async (req, res) => {
+  async (req, res, next) => {
     const evento = await Evento.findByPk(req.params.id);
-    if (!evento) return res.status(404).send("Evento no encontrado");
+    if (!evento) return noEncontrado(next);
 
     try {
       await evento.destroy();
@@ -222,9 +232,9 @@ router.post(
   requiereSesion,
   requierePermiso("editar"),
   requiereRol("Taquillero"),
-  async (req, res) => {
+  async (req, res, next) => {
     const evento = await Evento.findByPk(req.params.id);
-    if (!evento) return res.status(404).send("Evento no encontrado");
+    if (!evento) return noEncontrado(next);
     evento.publicado = true;
     await evento.save();
     res.redirect(`/eventos/${evento.id}`);
