@@ -2,37 +2,48 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Lista de Compras</title>
+    <link rel="stylesheet" href="/css/eventos-compras.css" />
   </head>
-  <body>
+  <body class="ev">
+    <header class="barra">
+      <span class="marca">Entradas</span>
+      <nav><a href="/">Inicio</a><a href="/eventos">Eventos</a></nav>
+    </header>
+
+    <main class="contenedor">
     <h1>Compras de: <%= evento.nombre %></h1>
-      <a href="/eventos/<%= evento.id %>">Volver al evento</a>
+      <p><a href="/eventos/<%= evento.id %>">Volver al evento</a></p>
 
       <% if (compras.length === 0) { %>
-        <p>Aún no hay compras.</p>
+        <div class="tabla-envoltura"><p class="vacio">Aún no hay compras.</p></div>
       <% } else { %>
-        <table>
+        <div class="tabla-envoltura">
+        <table class="apilable">
           <tr>
             <th>ID</th>
             <th>Fecha y Hora</th>
             <th>Comprador</th>
-            <th>Cantidad</th>
-            <th>Total</th>
+            <th class="num">Cantidad</th>
+            <th class="num">Total</th>
             <th>Estado</th>
             <th></th>
           </tr>
           <% compras.forEach(c => { %>
             <tr>
-              <td><%= c.id %></td>
-              <td><%= c.fecha_hora.toLocaleString('es-CR', { timeZone: 'America/Costa_Rica' }) %></td>
-              <td><%= c.comprador %> (<%= c.correo %>)</td>
-              <td><%= c.cantidad %></td>
-              <td>₡<%= c.total %></td>
-              <td><%= c.estado %></td>
-              <td><a href="/compra/<%= c.id %>">Ver detalle</a></td>
+              <td data-label="ID"><%= c.id %></td>
+              <td data-label="Fecha y Hora"><%= c.fecha_hora.toLocaleString('es-CR', { timeZone: 'America/Costa_Rica' }) %></td>
+              <td data-label="Comprador"><%= c.comprador %> (<%= c.correo %>)</td>
+              <td data-label="Cantidad" class="num"><%= c.cantidad %></td>
+              <td data-label="Total" class="num">₡<%= c.total %></td>
+              <td data-label="Estado"><span class="badge <%= c.estado === 'activa' ? 'ok' : 'off' %>"><%= c.estado %></span></td>
+              <td data-label=""><a href="/compra/<%= c.id %>">Ver detalle</a></td>
             </tr>
           <% }) %>
         </table>
+        </div>
       <% } %>
+    </main>
   </body>
 </html>
