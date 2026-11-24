@@ -1,0 +1,102 @@
+/* ==========================================================================
+   sesion.css  ·  Complementos de estilo para LOGIN, INICIO y AUDITORÍA
+   Se carga DESPUÉS de eventos-compras.css y reutiliza sus variables y clases
+   (barra, tarjeta, alerta, boton, badge, tabla-envoltura...).
+   Todo va dentro de body.ev y no usa estilos en línea (la CSP solo permite 'self').
+   ========================================================================== */
+
+/* ---------- Login: tarjeta centrada en la pantalla ---------- */
+body.ev.centrado {
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+}
+
+body.ev .login {
+  width: min(100%, 420px);
+}
+
+body.ev .login .marca {
+  display: block;
+  margin-bottom: 0.75rem;
+  color: var(--noche-2);
+}
+
+body.ev .login form.formulario button {
+  width: 100%;
+}
+
+body.ev .login .pie {
+  margin: 1rem 0 0;
+  font-size: 0.85rem;
+  color: var(--suave);
+  text-align: center;
+}
+
+/* ---------- Barra superior: botón de cerrar sesión ---------- */
+body.ev .barra nav {
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+body.ev .barra form.salir {
+  margin: 0;
+}
+
+body.ev .barra form.salir button {
+  padding: 0.35rem 0.85rem;
+  font-size: 0.85rem;
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.45);
+  box-shadow: none;
+}
+
+body.ev .barra form.salir button:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: none;
+}
+
+/* ---------- Auditoría: filtros y tabla ---------- */
+body.ev select {
+  width: 100%;
+  padding: 0.62rem 0.8rem;
+  font: inherit;
+  font-weight: 400;
+  color: var(--texto);
+  background: #fff;
+  border: 2px solid var(--linea);
+  border-radius: 10px;
+}
+
+body.ev select:focus {
+  outline: none;
+  border-color: var(--acento);
+  box-shadow: 0 0 0 4px rgba(255, 122, 69, 0.18);
+}
+
+body.ev .filtros {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 1rem;
+  align-items: end;
+}
+
+body.ev .filtros .acciones {
+  margin: 0;
+}
+
+body.ev td.ruta,
+body.ev td.detalle {
+  overflow-wrap: anywhere;
+}
+
+body.ev td.ruta {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88rem;
+}
+
+body.ev .nota {
+  margin: 0 0 1rem;
+  color: var(--suave);
+  font-size: 0.9rem;
+}
