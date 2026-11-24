@@ -50,7 +50,7 @@ INSERT INTO eventos (codigo, nombre, lugar, fecha, capacidad, entradas_vendidas,
 
 -- ---------- Un comprador ficticio ----------
 INSERT INTO compradores (nombre, correo, telefono)
-VALUES ('Carlos Comprador', 'carlos@example.com', '8888-0000');
+VALUES ('Carlos Comprador', 'carlos@example.com', '88880000');
 
 -- ============================================================
 -- Compras y entradas de prueba (TODO FICTICIO)
@@ -64,10 +64,10 @@ VALUES ('Carlos Comprador', 'carlos@example.com', '8888-0000');
 
 -- ---------- Más compradores ficticios (Carlos ya existe) ----------
 INSERT INTO compradores (nombre, correo, telefono) VALUES
- ('Marta Ejemplo', 'marta@example.com', '8888-1111'),
- ('Luis Prueba',   'luis@example.com',  '8888-2222'),
+ ('Marta Ejemplo', 'marta@example.com', '88881111'),
+ ('Luis Prueba',   'luis@example.com',  '88882222'),
  ('Ana Ficticia',  'ana@example.com',   NULL),
- ('Pedro Demo',    'pedro@example.com', '8888-3333');
+ ('Pedro Demo',    'pedro@example.com', '88883333');
 
 -- ---------- Compras con pocas filas (se escriben a mano) ----------
 -- vendida_por: la taquillera de prueba. total = cantidad * precio del evento.
