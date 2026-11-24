@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Lista de Compras</title>
+  </head>
+  <body>
+    <h1>Compras de: <%= evento.nombre %></h1>
+      <a href="/eventos/<%= evento.id %>">Volver al evento</a>
+
+      <% if (compras.length === 0) { %>
+        <p>Aún no hay compras.</p>
+      <% } else { %>
+        <table>
+          <tr>
+            <th>ID</th>
+            <th>Fecha y Hora</th>
+            <th>Comprador</th>
+            <th>Cantidad</th>
+            <th>Total</th>
+            <th>Estado</th>
+            <th></th>
+          </tr>
+          <% compras.forEach(c => { %>
+            <tr>
+              <td><%= c.id %></td>
+              <td><%= c.fecha_hora.toLocaleString('es-CR', { timeZone: 'America/Costa_Rica' }) %></td>
+              <td><%= c.comprador %> (<%= c.correo %>)</td>
+              <td><%= c.cantidad %></td>
+              <td>₡<%= c.total %></td>
+              <td><%= c.estado %></td>
+              <td><a href="/compra/<%= c.id %>">Ver detalle</a></td>
+            </tr>
+          <% }) %>
+        </table>
+      <% } %>
+  </body>
+</html>

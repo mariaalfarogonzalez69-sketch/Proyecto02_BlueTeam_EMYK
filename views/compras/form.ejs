@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Formulario de Compra</title>
+  </head>
+  <body>
+
+    <h1>Comprar entradas para: <%= evento.nombre %></h1>
+
+    <% if (locals.noDisponible) { %>
+        <p><%= noDisponible %></p>
+        <a href="/eventos/<%= evento.id %>">Volver al evento</a>
+    <% } else { %>
+        <p>Fecha: <%= evento.fecha.toLocaleString('es-CR', { timeZone: 'America/Costa_Rica' }) %></p>
+            <p>Precio por entrada: <%= evento.precio %></p>
+            <p>Entradas disponibles: <%= evento.capacidad - evento.entradas_vendidas %></p>
+            
+
+            <% if (errores.length > 0) { %>
+            <ul>
+                <% errores.forEach(e => { %>
+                <li><%= e %></li>
+                <% }) %>
+            </ul>
+            <% } %>
+
+            <form method="POST" action="/eventos/<%= evento.id %>/compra">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+            <label>Cantidad de entradas (máximo 6)
+                <input name="cantidad" type="number" min="1" max="6" value="<%= compra.cantidad || 1 %>">
+            </label>
+
+            <label>Nombre del comprador
+                <input name="nombre" required maxlength="100"
+                value="<%= compra.nombre || '' %>">
+            </label>
+
+            <label>Correo
+                <input name="correo" required maxlength="120"
+                type="email" value="<%= compra.correo || '' %>">
+            </label>
+
+            <label>Teléfono (opcional: solo números)
+            <input name="telefono" type="tel" inputmode="numeric" maxlength="30"
+                    pattern="[0-9]+"
+                    title="Solo números, sin guiones ni espacios (88880000)"
+                    value="<%= compra.telefono || '' %>">
+            </label>
+
+            <button type="submit">Comprar</button>
+            <a href="/eventos/<%= evento.id %>">Cancelar</a>
+            </form>
+        <% } %>
+    </body>
+</html>

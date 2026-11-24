@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Detalle del Evento</title>
+  </head>
+  <body>
+
+    <h1>Detalle del evento </h1>
+
+        <p><strong>Código:</strong> <%= evento.codigo %></p>
+        <p><strong>Nombre:</strong> <%= evento.nombre %></p>
+        <p><strong>Lugar:</strong> <%= evento.lugar %></p>
+        <p><strong>Fecha:</strong> <%= evento.fecha.toLocaleString('es-CR', { timeZone: 'America/Costa_Rica' }) %></p>
+        <p><strong>Capacidad:</strong> <%= evento.capacidad %></p>
+        <p><strong>Entradas vendidas:</strong> <%= evento.entradas_vendidas %></p>
+        <p><strong>Precio:</strong> ₡<%= evento.precio %></p>
+        <p><strong>Publicado:</strong> <%= evento.publicado ? 'Sí' : 'No' %></p>
+
+        <a href="/eventos">Volver a la lista</a>
+
+        <% if (usuario.rol === 'Taquillero') { %>
+          <a href="/eventos/<%= evento.id %>/editar">Editar</a>
+          <a href="/eventos/<%= evento.id %>/eliminar">Eliminar</a>
+          <% if (evento.publicado) { %>
+            <a href="/eventos/<%= evento.id %>/compra">Vender entradas</a>
+          <% } %>
+          <a href="/eventos/<%= evento.id %>/compras">Ver compras</a>
+
+        <% if (!evento.publicado) { %>
+            <form method="POST" action="/eventos/<%= evento.id %>/publicar">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button type="submit">Publicar</button>
+            </form>
+        <% } %>
+        <% } %>
+  </body>
+</html>

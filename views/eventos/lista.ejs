@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Lista de Eventos</title>
+  </head>
+  <body>
+    <h1>Eventos</h1>
+    <p><a href="/">Volver al inicio</a></p>
+
+    <form method="GET" action="/eventos">
+      <input name="q" value="<%= q %>" placeholder="Buscar por nombre">
+      <button type="submit">Buscar</button>
+      <% if (q) { %>
+        <a href="/eventos">Limpiar búsqueda</a>
+      <% } %>
+    </form>
+
+    <% if (usuario.rol === 'Taquillero') { %>
+      <a href="/eventos/nuevo">Nuevo evento</a>
+    <% } %>
+
+    <table>
+      <thead>
+        <tr><th>Código</th><th>Nombre</th><th>Lugar</th><th>Fecha</th><th>Publicado</th><th></th></tr>
+      </thead>
+      <tbody>
+        <% eventos.forEach(e => { %>
+          <tr>
+            <td><%= e.codigo %></td>
+            <td><%= e.nombre %></td>
+            <td><%= e.lugar %></td>
+            <td><%= e.fecha.toLocaleString('es-CR', { timeZone: 'America/Costa_Rica' }) %></td>
+            <td><%= e.publicado ? 'Sí' : 'No' %></td>
+            <td><a href="/eventos/<%= e.id %>">Ver detalle</a></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </body>
+</html>

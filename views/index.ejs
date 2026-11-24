@@ -10,6 +10,9 @@
   <% if (usuario.rol === 'SuperAdmin') { %>
     <p><a href="/auditoria">Ver registro de auditoría</a></p>
   <% } %>
+
+  <p><a href="/eventos">Ver eventos</a></p>
+
   <form method="POST" action="/logout">
     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
     <button type="submit">Cerrar sesión</button>

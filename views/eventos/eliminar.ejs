@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Eliminar Evento</title>
+  </head>
+  <body>
+    <h1>Eliminar Evento</h1>
+
+        <% if (error) { %>
+        <p><%= error %></p>
+        <% } %>
+
+        <p>¿Seguro que quieres eliminar el evento <strong><%= evento.nombre %></strong>?</p>
+
+        <form method="POST" action="/eventos/<%= evento.id %>/eliminar">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <button type="submit">Sí, eliminar</button>
+        <a href="/eventos/<%= evento.id %>">Cancelar</a>
+        </form>
+
+  </body>
+</html>
