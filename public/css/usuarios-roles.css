@@ -1,0 +1,252 @@
+﻿/* ==========================================================================
+   usuarios-roles.css · Administración de usuarios y roles
+   Complementa eventos-compras.css y sesion.css.
+   ========================================================================== */
+
+/* ---------- Navegación administrativa ---------- */
+body.ev .barra nav {
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+body.ev .barra nav a.activo {
+  color: #fff;
+  border-bottom-color: var(--dorado);
+  font-weight: 700;
+}
+
+/* ---------- Contenedores administrativos ---------- */
+body.ev .admin-contenedor {
+  width: min(100% - 2rem, 1100px);
+  margin: 2rem auto 3rem;
+}
+
+body.ev .admin-encabezado {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+body.ev .admin-encabezado h1 {
+  margin-bottom: 0;
+}
+
+body.ev .admin-descripcion {
+  color: var(--suave);
+  margin: 0.35rem 0 1.25rem;
+}
+
+/* ---------- Tarjetas y formularios ---------- */
+body.ev .admin-tarjeta {
+  max-width: 760px;
+  margin: 0 auto 1.25rem;
+  padding: clamp(1.2rem, 3vw, 2rem);
+  background: var(--tarjeta);
+  border: 1px solid var(--linea);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+}
+
+body.ev .admin-tarjeta h1 {
+  margin-bottom: 1.25rem;
+}
+
+body.ev .admin-formulario {
+  display: grid;
+  gap: 1rem;
+}
+
+body.ev .admin-formulario fieldset {
+  display: grid;
+  gap: 0.7rem;
+  padding: 1rem;
+  border: 1px solid var(--linea);
+  border-radius: 10px;
+}
+
+body.ev .admin-formulario legend {
+  padding: 0 0.4rem;
+  color: var(--noche-2);
+  font-weight: 700;
+}
+
+body.ev .admin-formulario fieldset label {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+body.ev .admin-formulario input[type="checkbox"] {
+  width: auto;
+  accent-color: var(--acento-oscuro);
+}
+
+body.ev .admin-formulario input[readonly] {
+  background: #f1eef7;
+  color: var(--suave);
+  cursor: not-allowed;
+}
+
+/* ---------- Tabla administrativa ---------- */
+body.ev .admin-tabla {
+  overflow-x: auto;
+}
+
+body.ev .admin-tabla table {
+  min-width: 760px;
+}
+
+body.ev .admin-tabla td {
+  overflow-wrap: anywhere;
+}
+
+body.ev .admin-tabla .permisos {
+  min-width: 180px;
+  color: var(--suave);
+  font-size: 0.9rem;
+}
+
+body.ev .admin-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+body.ev .admin-acciones form {
+  margin: 0;
+}
+
+body.ev .admin-acciones .boton,
+body.ev .admin-acciones button {
+  padding: 0.45rem 0.75rem;
+  font-size: 0.85rem;
+}
+
+body.ev .admin-enlace {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid var(--linea);
+  border-radius: 9px;
+  color: var(--noche-2);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+body.ev .admin-enlace:hover {
+  border-color: var(--acento);
+  background: #fff7f2;
+}
+
+/* ---------- Mensajes ---------- */
+body.ev .admin-mensaje {
+  margin: 0 0 1rem;
+  padding: 0.85rem 1rem;
+  border-left: 5px solid var(--ok);
+  border-radius: 9px;
+  color: #126644;
+  background: var(--ok-fondo);
+  font-weight: 600;
+}
+
+body.ev .admin-error {
+  margin: 0 0 1rem;
+  padding: 0.85rem 1rem;
+  border-left: 5px solid var(--error);
+  border-radius: 9px;
+  color: #7d1d27;
+  background: var(--error-fondo);
+}
+
+/* ---------- Navegación secundaria ---------- */
+body.ev .admin-regresar {
+  display: inline-block;
+  margin-bottom: 1rem;
+  color: var(--noche-2);
+  font-weight: 650;
+  text-decoration: none;
+}
+
+body.ev .admin-regresar:hover {
+  color: var(--acento-oscuro);
+  text-decoration: underline;
+}
+
+/* ---------- Adaptación móvil ---------- */
+@media (max-width: 720px) {
+  body.ev .admin-encabezado {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  body.ev .admin-encabezado .boton {
+    width: 100%;
+  }
+
+  body.ev .admin-tabla {
+    border-radius: 10px;
+  }
+
+  body.ev .admin-tarjeta {
+    padding: 1rem;
+  }
+}
+
+/* ---------- Corrección de botones en tabla de usuarios ---------- */
+body.ev .admin-tabla td:last-child {
+  min-width: 200px;
+}
+
+body.ev .admin-acciones {
+  flex-wrap: nowrap;
+  min-width: max-content;
+}
+
+body.ev .admin-acciones .boton,
+body.ev .admin-acciones button,
+body.ev .admin-acciones .admin-enlace {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 88px;
+  white-space: nowrap;
+  text-align: center;
+  word-break: normal;
+  overflow-wrap: normal;
+}
+
+
+/* Ajuste definitivo de acciones en tablas administrativas */
+body.ev .admin-tabla td:last-child {
+  min-width: 220px;
+}
+
+body.ev .admin-acciones {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.6rem;
+  min-width: 200px;
+}
+
+body.ev .admin-acciones form {
+  display: flex;
+  flex: 0 0 auto;
+  margin: 0;
+}
+
+body.ev .admin-acciones .admin-enlace,
+body.ev .admin-acciones .boton,
+body.ev .admin-acciones button {
+  flex: 0 0 auto;
+  min-width: 90px;
+  width: auto;
+  white-space: nowrap;
+  text-align: center;
+  overflow: visible;
+}
