@@ -6,7 +6,7 @@ const errorHandler = (err, req, res, next) => {
   }
 
   // Determinar el código de estado.
-  const status = [403, 404, 500].includes(err.status || err.statusCode)
+  const status = [400, 403, 404, 500].includes(err.status || err.statusCode)
     ? err.status || err.statusCode
     : 500;
 
@@ -15,6 +15,7 @@ const errorHandler = (err, req, res, next) => {
     403: "errores/403",
     404: "errores/404",
     500: "errores/500",
+    400: "errores/400",
   };
 
   // Mensajes seguros para el usuario.
@@ -22,6 +23,7 @@ const errorHandler = (err, req, res, next) => {
     403: "No tiene autorización para realizar esta operación.",
     404: "La página solicitada no existe o no está disponible.",
     500: "Ha ocurrido un error interno del servidor.",
+    400: "La solicitud contiene datos inválidos o no puede procesarse.",
   };
 
   // Registrar información técnica únicamente en el servidor.
@@ -33,7 +35,7 @@ const errorHandler = (err, req, res, next) => {
 
   // Mostrar la página correspondiente.
   res.status(status).render(paginas[status], {
-    mensaje: mensajes[status],
+    mensaje: err.publicMessage || mensajes[status],
   });
 };
 
