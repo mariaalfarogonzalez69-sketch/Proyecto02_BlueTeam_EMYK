@@ -23,12 +23,20 @@ function datosUsuarioValidos({ username, correo, nombre, identificacion }) {
         correo.length <= 120 &&
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo) &&
         nombre.length >= 1 && nombre.length <= 100 &&
-        identificacion.length >= 1 && identificacion.length <= 30
+        /^\d{9}$/.test(identificacion)
     );
 }
 
-function errorInterno(res) {
-    return res.status(500).send('Ocurrió un error interno. Intente nuevamente.');
+function errorInterno(next, error) {
+    error.status = 500;
+    return next(error);
+}
+
+function errorSolicitud(next, mensaje) {
+    const error = new Error(mensaje);
+    error.status = 400;
+    error.publicMessage = mensaje;
+    return next(error);
 }
 
 // Consultar usuarios: SuperAdmin, Auditor y Taquillero.
@@ -36,7 +44,7 @@ router.get(
     '/usuarios',
     requiereSesion,
     requiereRol('SuperAdmin', 'Auditor', 'Taquillero'),
-    async (req, res) => {
+    async (req, res, next) => {
         try {
             const usuarios = await Usuario.findAll({
                 attributes: { exclude: ['password_hash'] },
@@ -62,7 +70,7 @@ router.get(
             });
         } catch (error) {
             console.error('Error al consultar usuarios:', error.message);
-            return errorInterno(res);
+            return errorInterno(next, error);
         }
     }
 );
@@ -72,7 +80,7 @@ router.get(
     '/usuarios/nuevo',
     requiereSesion,
     requiereRol('SuperAdmin'),
-    async (req, res) => {
+    async (req, res, next) => {
         try {
             const roles = await Rol.findAll({
                 order: [['nombre', 'ASC']]
@@ -86,17 +94,18 @@ router.get(
             });
         } catch (error) {
             console.error('Error al cargar formulario:', error.message);
-            return errorInterno(res);
+            return errorInterno(next, error);
         }
     }
 );
 
 // Crear usuario: solo SuperAdmin.
+
 router.post(
     '/usuarios',
     requiereSesion,
     requiereRol('SuperAdmin'),
-    async (req, res) => {
+    async (req, res, next) => {
         const username = limpiar(req.body.username);
         const correo = limpiar(req.body.correo).toLowerCase();
         const nombre = limpiar(req.body.nombre);
@@ -112,7 +121,8 @@ router.post(
             username,
             correo,
             nombre,
-            identificacion
+            identificacion,
+            rol_id: req.body.rol_id || ''
         };
 
         try {
@@ -120,21 +130,105 @@ router.post(
                 order: [['nombre', 'ASC']]
             });
 
-            const rol = Number.isInteger(rolId) && rolId > 0
-                ? await Rol.findByPk(rolId)
-                : null;
+            // Validaciones individuales.
+            if (username.length < 1 || username.length > 50) {
+                return res.status(400).render('usuarios/nuevo', {
+                    titulo: 'Crear usuario',
+                    roles,
+                    datos,
+                    error: 'El nombre de usuario es obligatorio y debe tener máximo 50 caracteres.'
+                });
+            }
+
+            if (nombre.length < 1 || nombre.length > 100) {
+                return res.status(400).render('usuarios/nuevo', {
+                    titulo: 'Crear usuario',
+                    roles,
+                    datos,
+                    error: 'El nombre completo es obligatorio y debe tener máximo 100 caracteres.'
+                });
+            }
 
             if (
-                !datosUsuarioValidos(datos) ||
-                password.length < 8 ||
-                password.length > 128 ||
-                !rol
+                correo.length > 120 ||
+                !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)
             ) {
                 return res.status(400).render('usuarios/nuevo', {
                     titulo: 'Crear usuario',
                     roles,
                     datos,
-                    error: 'Revise los datos. La contraseña debe tener entre 8 y 128 caracteres y debe seleccionar un rol válido.'
+                    error: 'Ingrese un correo electrónico válido de máximo 120 caracteres.'
+                });
+            }
+
+            if (!/^\d{9}$/.test(identificacion)) {
+                return res.status(400).render('usuarios/nuevo', {
+                    titulo: 'Crear usuario',
+                    roles,
+                    datos,
+                    error: 'La identificación debe contener exactamente 9 dígitos.'
+                });
+            }
+
+            if (password.length < 8 || password.length > 128) {
+                return res.status(400).render('usuarios/nuevo', {
+                    titulo: 'Crear usuario',
+                    roles,
+                    datos,
+                    error: 'La contraseña debe tener entre 8 y 128 caracteres.'
+                });
+            }
+
+            const rol = Number.isInteger(rolId) && rolId > 0
+                ? await Rol.findByPk(rolId)
+                : null;
+
+            if (!rol) {
+                return res.status(400).render('usuarios/nuevo', {
+                    titulo: 'Crear usuario',
+                    roles,
+                    datos,
+                    error: 'Debe seleccionar un rol válido.'
+                });
+            }
+
+            // Comprobar valores únicos antes de crear el usuario.
+            const usernameExistente = await Usuario.findOne({
+                where: { username }
+            });
+
+            if (usernameExistente) {
+                return res.status(400).render('usuarios/nuevo', {
+                    titulo: 'Crear usuario',
+                    roles,
+                    datos,
+                    error: 'Ese nombre de usuario ya está registrado.'
+                });
+            }
+
+            const correoExistente = await Usuario.findOne({
+                where: { correo }
+            });
+
+            if (correoExistente) {
+                return res.status(400).render('usuarios/nuevo', {
+                    titulo: 'Crear usuario',
+                    roles,
+                    datos,
+                    error: 'Ese correo electrónico ya está registrado.'
+                });
+            }
+
+            const identificacionExistente = await Usuario.findOne({
+                where: { identificacion }
+            });
+
+            if (identificacionExistente) {
+                return res.status(400).render('usuarios/nuevo', {
+                    titulo: 'Crear usuario',
+                    roles,
+                    datos,
+                    error: 'Esa identificación ya está registrada. Cada usuario debe tener una identificación única.'
                 });
             }
 
@@ -150,34 +244,47 @@ router.post(
             });
 
             return res.redirect('/usuarios?mensaje=creado');
+
         } catch (error) {
+            // Protección adicional ante dos registros simultáneos.
             if (error.name === 'SequelizeUniqueConstraintError') {
                 const roles = await Rol.findAll({
                     order: [['nombre', 'ASC']]
                 });
 
+                let mensaje = 'Uno de los datos ingresados ya está registrado.';
+
+                if (error.fields?.identificacion) {
+                    mensaje = 'Esa identificación ya está registrada.';
+                } else if (error.fields?.username) {
+                    mensaje = 'Ese nombre de usuario ya está registrado.';
+                } else if (error.fields?.correo) {
+                    mensaje = 'Ese correo electrónico ya está registrado.';
+                }
+
                 return res.status(400).render('usuarios/nuevo', {
                     titulo: 'Crear usuario',
                     roles,
                     datos,
-                    error: 'El nombre de usuario, correo o identificación ya está registrado.'
+                    error: mensaje
                 });
             }
 
             console.error('Error al crear usuario:', error.message);
-            return errorInterno(res);
+            return errorInterno(next, error);
         }
     }
 );
+
 
 // Formulario de edición: solo SuperAdmin.
 router.get(
     '/usuarios/:id/editar',
     requiereSesion,
     requiereRol('SuperAdmin'),
-    async (req, res) => {
+    async (req, res, next) => {
         if (!idValido(req.params.id)) {
-            return res.status(400).send('Identificador de usuario inválido.');
+            return errorSolicitud(next, 'Identificador de usuario inválido.');
         }
 
         try {
@@ -186,7 +293,9 @@ router.get(
             });
 
             if (!usuario) {
-                return res.status(404).send('Usuario no encontrado.');
+                const error = new Error('Usuario no encontrado.');
+                error.status = 404;
+                return next(error);
             }
 
             const roles = await Rol.findAll({
@@ -201,7 +310,7 @@ router.get(
             });
         } catch (error) {
             console.error('Error al cargar usuario:', error.message);
-            return errorInterno(res);
+            return errorInterno(next, error);
         }
     }
 );
@@ -212,9 +321,9 @@ router.post(
     '/usuarios/:id/editar',
     requiereSesion,
     requiereRol('SuperAdmin'),
-    async (req, res) => {
+    async (req, res, next) => {
         if (!idValido(req.params.id)) {
-            return res.status(400).send('Identificador de usuario inválido.');
+            return errorSolicitud(next, 'Identificador de usuario inválido.');
         }
 
         const username = limpiar(req.body.username);
@@ -240,7 +349,9 @@ router.post(
 
             if (!usuario) {
                 await transaccion.rollback();
-                return res.status(404).send('Usuario no encontrado.');
+                const error = new Error('Usuario no encontrado.');
+                error.status = 404;
+                return next(error);
             }
 
             const roles = await Rol.findAll({
@@ -259,8 +370,7 @@ router.post(
                 username.length <= 50 &&
                 nombre.length >= 1 &&
                 nombre.length <= 100 &&
-                identificacion.length >= 1 &&
-                identificacion.length <= 30 &&
+                /^\d{9}$/.test(identificacion) &&
                 correo.length <= 120 &&
                 /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo) &&
                 rol &&
@@ -364,7 +474,9 @@ router.post(
                     });
 
                     if (!usuario) {
-                        return res.status(404).send('Usuario no encontrado.');
+                        const error = new Error('Usuario no encontrado.');
+                        error.status = 404;
+                        return next(error);
                     }
 
                     usuario.username = username;
@@ -391,12 +503,12 @@ router.post(
                         'Error al recuperar usuario:',
                         errorCarga.message
                     );
-                    return errorInterno(res);
+                    return errorInterno(next, errorCarga);
                 }
             }
 
             console.error('Error al editar usuario:', error.message);
-            return errorInterno(res);
+            return errorInterno(next, error);
         }
     }
 );
@@ -406,9 +518,9 @@ router.post(
     '/usuarios/:id/eliminar',
     requiereSesion,
     requiereRol('SuperAdmin'),
-    async (req, res) => {
+    async (req, res, next) => {
         if (!idValido(req.params.id)) {
-            return res.status(400).send('Identificador de usuario inválido.');
+            return errorSolicitud(next, 'Identificador de usuario inválido.');
         }
 
         let transaccion;
@@ -423,12 +535,14 @@ router.post(
 
             if (!usuario) {
                 await transaccion.rollback();
-                return res.status(404).send('Usuario no encontrado.');
+                const error = new Error('Usuario no encontrado.');
+                error.status = 404;
+                return next(error);
             }
 
             if (String(usuario.id) === String(req.usuario.id)) {
                 await transaccion.rollback();
-                return res.status(400).send('No puede eliminar su propia cuenta.');
+                return errorSolicitud(next, 'No puede eliminar su propia cuenta.');
             }
 
             const rolSuperAdmin = await Rol.findOne({
@@ -448,7 +562,7 @@ router.post(
 
                 if (cantidadSuperAdmin <= 1) {
                     await transaccion.rollback();
-                    return res.status(400).send('No se puede eliminar al último SuperAdmin.');
+                    return errorSolicitud(next, 'No se puede eliminar al último SuperAdmin.');
                 }
             }
 
@@ -465,7 +579,7 @@ router.post(
             }
 
             console.error('Error al eliminar usuario:', error.message);
-            return errorInterno(res);
+            return errorInterno(next, error);
         }
     }
 );
