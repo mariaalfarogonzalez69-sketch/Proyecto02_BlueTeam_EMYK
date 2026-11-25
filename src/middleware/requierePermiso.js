@@ -22,7 +22,9 @@ module.exports = function requierePermiso(permiso) {
                 console.error('No se pudo registrar el acceso denegado.');
             }
 
-            return res.status(403).render('errores/403');
+            return res.status(403).render('errores/403', {
+                mensaje: 'No tiene autorización para realizar esta operación.'
+            });
         }
 
         return next();

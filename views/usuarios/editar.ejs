@@ -5,89 +5,153 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= titulo %></title>
+
+    <link rel="stylesheet" href="/css/eventos-compras.css">
+    <link rel="stylesheet" href="/css/sesion.css">
+    <link rel="stylesheet" href="/css/usuarios-roles.css">
 </head>
-<body>
-    <h1><%= titulo %></h1>
-    <p><a href="/usuarios">Volver al listado</a></p>
+<body class="ev">
+    <header class="barra">
+        <span class="marca">Entradas</span>
 
-    <% if (error) { %>
-        <p role="alert"><%= error %></p>
-    <% } %>
+        <nav aria-label="Navegación principal">
+            <a href="/">Inicio</a>
+            <a href="/eventos">Eventos</a>
+            <a href="/usuarios" class="activo">Usuarios</a>
 
-    <form action="/usuarios/<%= usuario.id %>/editar" method="POST">
-        <input
-            type="hidden"
-            name="_csrf"
-            value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>"
-        >
+            <% if (usuario && usuario.rol === 'SuperAdmin') { %>
+                <a href="/roles">Roles</a>
+            <% } %>
 
-        <label for="username">Nombre de usuario:</label>
-        <input
-            id="username"
-            name="username"
-            type="text"
-            minlength="1"
-            maxlength="50"
-            value="<%= usuario.username %>"
-            required
-        >
+            <% if (usuario && usuario.permisos && usuario.permisos.includes('ver_reportes')) { %>
+                <a href="/reportes/ventas">Reporte de ventas</a>
+            <% } %>
 
-        <label for="nombre">Nombre completo:</label>
-        <input
-            id="nombre"
-            name="nombre"
-            type="text"
-            minlength="1"
-            maxlength="100"
-            value="<%= usuario.nombre %>"
-            required
-        >
+            <% if (usuario && usuario.rol === 'Taquillero') { %>
+                <a href="/puerta">Validar entrada</a>
+            <% } %>
 
-        <label for="identificacion">Identificación:</label>
-        <input
-            id="identificacion"
-            name="identificacion"
-            type="text"
-            minlength="1"
-            maxlength="30"
-            value="<%= usuario.identificacion %>"
-            required
-        >
+            <% if (usuario && usuario.rol === 'SuperAdmin') { %>
+                <a href="/auditoria">Auditoría</a>
+            <% } %>
 
-        <label for="correo">Correo electrónico:</label>
-        <input
-            id="correo"
-            name="correo"
-            type="email"
-            maxlength="120"
-            value="<%= usuario.correo %>"
-            required
-        >
+            <form class="salir" method="POST" action="/logout">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button type="submit">Cerrar sesión</button>
+            </form>
+        </nav>
+    </header>
 
-        <label for="rol_id">Rol:</label>
-        <select id="rol_id" name="rol_id" required>
-            <% roles.forEach(rol => { %>
-                <option
-                    value="<%= rol.id %>"
-                    <%= Number(usuario.rol_id) === Number(rol.id) ? 'selected' : '' %>
+    <main class="admin-contenedor">
+        <a class="admin-regresar" href="/usuarios">
+            ← Volver al listado de usuarios
+        </a>
+
+        <section class="admin-tarjeta">
+            <h1><%= titulo %></h1>
+
+            <p class="admin-descripcion">
+                Modifique los datos de la cuenta. Si no desea cambiar la contraseña,
+                deje ese campo vacío.
+            </p>
+
+            <% if (error) { %>
+                <p class="admin-error" role="alert"><%= error %></p>
+            <% } %>
+
+            <form
+                class="admin-formulario"
+                action="/usuarios/<%= usuario.id %>/editar"
+                method="POST"
+            >
+                <input
+                    type="hidden"
+                    name="_csrf"
+                    value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>"
                 >
-                    <%= rol.nombre %>
-                </option>
-            <% }) %>
-        </select>
 
-        <label for="password">Nueva contraseña (opcional):</label>
-        <input
-            id="password"
-            name="password"
-            type="password"
-            minlength="8"
-            maxlength="128"
-            autocomplete="new-password"
-            placeholder="Dejar en blanco para conservar la actual"
-        >
+                <label for="username">
+                    Nombre de usuario:
+                </label>
+                <input
+                    id="username"
+                    name="username"
+                    type="text"
+                    minlength="1"
+                    maxlength="50"
+                    value="<%= usuario.username %>"
+                    required
+                >
 
-        <button type="submit">Guardar cambios</button>
-    </form>
+                <label for="nombre">Nombre completo:</label>
+                <input
+                    id="nombre"
+                    name="nombre"
+                    type="text"
+                    minlength="1"
+                    maxlength="100"
+                    value="<%= usuario.nombre %>"
+                    required
+                >
+
+                <label for="identificacion">Identificación:</label>
+                <input
+                    id="identificacion"
+                    name="identificacion"
+                    type="text"
+                    minlength="9"
+                    maxlength="9"
+                    pattern="[0-9]{9}"
+                    inputmode="numeric"
+                    title="La identificación debe contener exactamente 9 dígitos."
+                    value="<%= usuario.identificacion %>"
+                    required
+                >
+
+                <label for="correo">Correo electrónico:</label>
+                <input
+                    id="correo"
+                    name="correo"
+                    type="email"
+                    maxlength="120"
+                    value="<%= usuario.correo %>"
+                    required
+                >
+
+                <label for="rol_id">Rol:</label>
+                <select id="rol_id" name="rol_id" required>
+                    <% roles.forEach(rol => { %>
+                        <option
+                            value="<%= rol.id %>"
+                            <%= Number(usuario.rol_id) === Number(rol.id) ? 'selected' : '' %>
+                        >
+                            <%= rol.nombre %>
+                        </option>
+                    <% }) %>
+                </select>
+
+                <label for="password">Nueva contraseña (opcional):</label>
+                <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    minlength="8"
+                    maxlength="128"
+                    autocomplete="new-password"
+                    placeholder="Dejar en blanco para conservar la actual"
+                >
+
+                <div class="acciones">
+                    <button class="boton" type="submit">
+                        Guardar cambios
+                    </button>
+
+                    <a class="boton secundario" href="/usuarios">
+                        Cancelar
+                    </a>
+                </div>
+            </form>
+        </section>
+    </main>
 </body>
 </html>

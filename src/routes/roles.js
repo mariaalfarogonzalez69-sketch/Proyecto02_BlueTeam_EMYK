@@ -44,7 +44,7 @@ function idValido(id) {
 }
 
 // Listar roles y sus permisos.
-router.get('/roles', async (req, res) => {
+router.get('/roles', async (req, res, next) => {
     try {
         const roles = await Rol.findAll({
             include: [{
@@ -65,12 +65,13 @@ router.get('/roles', async (req, res) => {
         });
     } catch (error) {
         console.error('Error al consultar roles:', error.message);
-        return res.status(500).send('Ocurrió un error interno.');
+        error.status = 500;
+        return next(error);
     }
 });
 
 // Formulario para crear un rol.
-router.get('/roles/nuevo', async (req, res) => {
+router.get('/roles/nuevo', async (req, res, next) => {
     try {
         const permisos = await cargarPermisos();
 
@@ -82,12 +83,13 @@ router.get('/roles/nuevo', async (req, res) => {
         });
     } catch (error) {
         console.error('Error al cargar formulario de rol:', error.message);
-        return res.status(500).send('Ocurrió un error interno.');
+        error.status = 500;
+        return next(error);
     }
 });
 
 // Crear rol y asignar sus permisos.
-router.post('/roles', async (req, res) => {
+router.post('/roles', async (req, res, next) => {
     const nombre = typeof req.body.nombre === 'string'
         ? req.body.nombre.trim()
         : '';
@@ -185,12 +187,13 @@ router.post('/roles', async (req, res) => {
         }
 
         console.error('Error al crear rol:', error.message);
-        return res.status(500).send('Ocurrió un error interno.');
+        error.status = 500;
+        return next(error);
     }
 });
 
 // Formulario para editar nombre y permisos.
-router.get('/roles/:id/editar', async (req, res) => {
+router.get('/roles/:id/editar', async (req, res, next) => {
     if (!idValido(req.params.id)) {
         return res.status(400).send('Identificador de rol inválido.');
     }
@@ -206,7 +209,9 @@ router.get('/roles/:id/editar', async (req, res) => {
         });
 
         if (!rol) {
-            return res.status(404).send('Rol no encontrado.');
+            const error = new Error('Rol no encontrado.');
+            error.status = 404;
+            return next(error);
         }
 
         const permisos = await cargarPermisos();
@@ -219,12 +224,13 @@ router.get('/roles/:id/editar', async (req, res) => {
         });
     } catch (error) {
         console.error('Error al cargar rol:', error.message);
-        return res.status(500).send('Ocurrió un error interno.');
+        error.status = 500;
+        return next(error);
     }
 });
 
 // Actualizar nombre y permisos del rol.
-router.post('/roles/:id/editar', async (req, res) => {
+router.post('/roles/:id/editar', async (req, res, next) => {
     if (!idValido(req.params.id)) {
         return res.status(400).send('Identificador de rol inválido.');
     }
@@ -248,7 +254,9 @@ router.post('/roles/:id/editar', async (req, res) => {
 
         if (!rol) {
             await transaccion.rollback();
-            return res.status(404).send('Rol no encontrado.');
+            const error = new Error('Rol no encontrado.');
+            error.status = 404;
+            return next(error);
         }
 
         // Obtener los permisos actuales dentro de la misma transacción.
@@ -393,7 +401,9 @@ router.post('/roles/:id/editar', async (req, res) => {
                 });
 
                 if (!rol) {
-                    return res.status(404).send('Rol no encontrado.');
+                    const error = new Error('Rol no encontrado.');
+                    error.status = 404;
+                    return next(error);
                 }
 
                 const permisos = await cargarPermisos();
@@ -410,17 +420,19 @@ router.post('/roles/:id/editar', async (req, res) => {
                     errorCarga.message
                 );
 
-                return res.status(500).send('Ocurrió un error interno.');
+                errorCarga.status = 500;
+                return next(errorCarga);
             }
         }
 
         console.error('Error al editar rol:', error.message);
-        return res.status(500).send('Ocurrió un error interno.');
+        error.status = 500;
+        return next(error);
     }
 });
 
 // Eliminar rol únicamente si no es protegido y no tiene usuarios.
-router.post('/roles/:id/eliminar', async (req, res) => {
+router.post('/roles/:id/eliminar', async (req, res, next) => {
     if (!idValido(req.params.id)) {
         return res.status(400).send('Identificador de rol inválido.');
     }
@@ -471,7 +483,9 @@ router.post('/roles/:id/eliminar', async (req, res) => {
         });
 
         if (resultado.estado === 'no-encontrado') {
-            return res.status(404).send('Rol no encontrado.');
+            const error = new Error('Rol no encontrado.');
+            error.status = 404;
+            return next(error);
         }
 
         if (resultado.estado === 'protegido') {
@@ -504,7 +518,8 @@ router.post('/roles/:id/eliminar', async (req, res) => {
         return res.redirect('/roles?mensaje=eliminado');
     } catch (error) {
         console.error('Error al eliminar rol:', error.message);
-        return res.status(500).send('Ocurrió un error interno.');
+        error.status = 500;
+        return next(error);
     }
 });
 

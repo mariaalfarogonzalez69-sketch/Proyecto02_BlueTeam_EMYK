@@ -1,53 +1,94 @@
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= titulo %></title>
+    <link rel="stylesheet" href="/css/eventos-compras.css">
+    <link rel="stylesheet" href="/css/sesion.css">
+    <link rel="stylesheet" href="/css/usuarios-roles.css">
 </head>
-<body>
-    <h1><%= titulo %></h1>
-    <p><a href="/usuarios">Volver al listado</a></p>
+<body class="ev">
+    <header class="barra">
+        <span class="marca">Entradas</span>
+        <nav aria-label="Navegación principal">
+            <a href="/">Inicio</a>
+            <a href="/eventos">Eventos</a>
+            <a href="/usuarios" class="activo">Usuarios</a>
+            <% if (usuario && usuario.rol === 'SuperAdmin') { %>
+                <a href="/roles">Roles</a>
+            <% } %>
+            <% if (usuario && usuario.permisos && usuario.permisos.includes('ver_reportes')) { %>
+                <a href="/reportes/ventas">Reporte de ventas</a>
+            <% } %>
+            <% if (usuario && usuario.rol === 'Taquillero') { %>
+                <a href="/puerta">Validar entrada</a>
+            <% } %>
+            <% if (usuario && usuario.rol === 'SuperAdmin') { %>
+                <a href="/auditoria">Auditoría</a>
+            <% } %>
+            <form class="salir" method="POST" action="/logout">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button type="submit">Cerrar sesión</button>
+            </form>
+        </nav>
+    </header>
 
-    <% if (error) { %>
-        <p role="alert"><%= error %></p>
-    <% } %>
+    <main class="admin-contenedor">
+        <a class="admin-regresar" href="/usuarios">← Volver al listado de usuarios</a>
 
-    <form action="/usuarios" method="POST">
-        <input type="hidden" name="_csrf" value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>">
+        <section class="admin-tarjeta">
+            <h1><%= titulo %></h1>
+            <p class="admin-descripcion">Complete los datos para registrar una nueva cuenta en el sistema.</p>
 
-        <label for="username">Nombre de usuario:</label>
-        <input id="username" name="username" maxlength="50"
-            value="<%= datos.username || '' %>" required>
+            <% if (error) { %>
+                <p class="admin-error" role="alert"><%= error %></p>
+            <% } %>
 
-        <label for="nombre">Nombre completo:</label>
-        <input id="nombre" name="nombre" maxlength="100"
-            value="<%= datos.nombre || '' %>" required>
+            <form class="admin-formulario" action="/usuarios" method="POST">
+                <input type="hidden" name="_csrf"
+                       value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>">
 
-        <label for="correo">Correo:</label>
-        <input id="correo" name="correo" type="email" maxlength="120"
-            value="<%= datos.correo || '' %>" required>
+                <label for="username">Nombre de usuario:</label>
+                <input id="username" name="username" maxlength="50"
+                       value="<%= datos.username || '' %>" required>
 
-        <label for="identificacion">Identificación:</label>
-        <input id="identificacion" name="identificacion" maxlength="30"
-            value="<%= datos.identificacion || '' %>" required>
+                <label for="nombre">Nombre completo:</label>
+                <input id="nombre" name="nombre" maxlength="100"
+                       value="<%= datos.nombre || '' %>" required>
 
-        <label for="password">Contraseña:</label>
-        <input id="password" name="password" type="password"
-            minlength="8" maxlength="128" required>
+                <label for="correo">Correo:</label>
+                <input id="correo" name="correo" type="email" maxlength="120"
+                       value="<%= datos.correo || '' %>" required>
 
-        <label for="rol_id">Rol:</label>
-        <select id="rol_id" name="rol_id" required>
-            <option value="">Seleccione un rol</option>
-            <% roles.forEach(rol => { %>
-                <option value="<%= rol.id %>"
-                    <%= String(datos.rol_id || '') === String(rol.id) ? 'selected' : '' %>>
-                    <%= rol.nombre %>
-                </option>
-            <% }) %>
-        </select>
+                <label for="identificacion">Identificación:</label>
+                <input id="identificacion" name="identificacion"
+                       type="text" minlength="9" maxlength="9"
+                       pattern="[0-9]{9}" inputmode="numeric"
+                       title="La identificación debe contener exactamente 9 dígitos."
+                       value="<%= datos.identificacion || '' %>" required>
 
-        <button type="submit">Crear usuario</button>
-    </form>
+                <label for="password">Contraseña:</label>
+                <input id="password" name="password" type="password"
+                       minlength="8" maxlength="128" required>
+
+                <label for="rol_id">Rol:</label>
+                <select id="rol_id" name="rol_id" required>
+                    <option value="">Seleccione un rol</option>
+                    <% roles.forEach(rol => { %>
+                        <option value="<%= rol.id %>"
+                            <%= String(datos.rol_id || '') === String(rol.id) ? 'selected' : '' %>>
+                            <%= rol.nombre %>
+                        </option>
+                    <% }) %>
+                </select>
+
+                <div class="acciones">
+                    <button class="boton" type="submit">Crear usuario</button>
+                    <a class="boton secundario" href="/usuarios">Cancelar</a>
+                </div>
+            </form>
+        </section>
+    </main>
 </body>
 </html>
