@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Detalle de la Compra</title>
+    <link rel="stylesheet" href="/css/eventos-compras.css" />
+  </head>
+  <body class="ev">
+    <header class="barra">
+      <span class="marca">Entradas</span>
+      <nav><a href="/">Inicio</a><a href="/eventos">Eventos</a></nav>
+    </header>
+
+    <main class="contenedor">
+    <h1>Detalle de la compra #<%= compra.id %></h1>
+
+        <% if (errores.length > 0) { %>
+          <div class="alerta error">
+            <ul>
+              <% errores.forEach(e => { %>
+                <li><%= e %></li>
+              <% }) %>
+            </ul>
+          </div>
+        <% } %>
+
+        <section class="tarjeta">
+          <dl class="ficha">
+            <dt>Fecha y Hora</dt><dd><%= compra.fecha_hora.toLocaleString('es-CR', { timeZone: 'America/Costa_Rica' }) %></dd>
+            <dt>Cantidad</dt><dd><%= compra.cantidad %></dd>
+            <dt>Total</dt><dd>₡<%= compra.total %></dd>
+            <dt>Estado</dt><dd><span class="badge <%= compra.estado === 'activa' ? 'ok' : 'off' %>"><%= compra.estado %></span></dd>
+          </dl>
+        </section>
+
+        <section class="tarjeta">
+          <h2>Comprador</h2>
+          <dl class="ficha">
+            <dt>Nombre</dt><dd><%= comprador.nombre %></dd>
+            <dt>Correo</dt><dd><%= comprador.correo %></dd>
+            <dt>Teléfono</dt><dd><%= comprador.telefono || '—' %></dd>
+          </dl>
+        </section>
+
+        <h2>Entradas</h2>
+        <% if (mostrarCodigos) { %>
+          <p class="alerta aviso entrega"><strong>Entregue estos códigos al comprador.</strong> Después de 1 minuto solo se verán los últimos 4 caracteres.</p>
+        <% } %>
+        <div class="tabla-envoltura">
+        <table class="apilable">
+          <tr>
+            <th>#</th>
+            <th>Código</th>
+            <th>Estado de la entrada</th>
+          </tr>
+          <% entradas.forEach((e, i) => { %>
+            <tr>
+              <td data-label="#"><%= i + 1 %></td>
+              <td data-label="Código"><span class="codigo"><%= e.codigo %></span></td>
+              <td data-label="Estado de la entrada">
+                <% if (compra.estado === 'anulada') { %>
+                  <span class="badge malo">Sin validez (compra anulada)</span>
+                <% } else { %>
+                  <span class="badge <%= e.usada ? 'off' : 'ok' %>"><%= e.usada ? 'Usada' : 'Disponible' %></span>
+                <% } %>
+              </td>
+            </tr>
+          <% }) %>
+        </table>
+        </div>
+
+        <div class="acciones">
+        <a class="boton secundario" href="/eventos/<%= compra.evento_id %>/compras">Volver a la lista de compras</a>
+        <% if (usuario.rol === 'Taquillero' && compra.estado === 'activa') { %>
+          <form method="POST" action="/compra/<%= compra.id %>/anular">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button class="peligro" type="submit">Anular compra</button>
+          </form>
+        <% } %>
+        </div>
+    </main>
+  </body>
+</html>

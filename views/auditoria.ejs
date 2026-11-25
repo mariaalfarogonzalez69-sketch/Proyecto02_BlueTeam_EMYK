@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Registro de auditoría</title>
+    <link rel="stylesheet" href="/css/eventos-compras.css" />
+    <link rel="stylesheet" href="/css/sesion.css" />
+  </head>
+  <body class="ev">
+    <header class="barra">
+      <span class="marca">Entradas</span>
+      <nav>
+        <a href="/">Inicio</a>
+        <a href="/eventos">Eventos</a>
+        <a href="/auditoria">Auditoría</a>
+        <form class="salir" method="POST" action="/logout">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <button type="submit">Cerrar sesión</button>
+        </form>
+      </nav>
+    </header>
+
+    <main class="contenedor">
+      <h1>Registro de auditoría</h1>
+
+      <%
+        // Texto y color de cada tipo de evento (valores fijos, no vienen del usuario)
+        const etiquetas = {
+          login_ok: 'Login correcto',
+          login_fallido: 'Login fallido',
+          cambio_rol: 'Cambio de rol',
+          cambio_permisos: 'Cambio de permisos',
+          acceso_403: 'Acceso denegado (403)',
+        };
+        const colores = { login_ok: 'ok', login_fallido: 'malo', acceso_403: 'malo', cambio_rol: 'off', cambio_permisos: 'off' };
+      %>
+
+      <!-- Es un GET que solo lee: no necesita token CSRF -->
+      <form class="tarjeta filtros" method="GET" action="/auditoria">
+        <label>Tipo
+          <select name="tipo">
+            <option value="">Todos</option>
+            <% tipos.forEach((t) => { %>
+              <option value="<%= t %>" <%= filtro.tipo === t ? 'selected' : '' %>><%= etiquetas[t] || t %></option>
+            <% }) %>
+          </select>
+        </label>
+        <label>Desde <input type="date" name="desde" value="<%= filtro.desde %>"></label>
+        <label>Hasta <input type="date" name="hasta" value="<%= filtro.hasta %>"></label>
+        <div class="acciones">
+          <button type="submit">Filtrar</button>
+          <a class="boton secundario" href="/auditoria">Limpiar</a>
+        </div>
+      </form>
+
+      <p class="nota">Se muestran los 200 registros más recientes.</p>
+
+      <div class="tabla-envoltura">
+        <table class="apilable">
+          <thead>
+            <tr><th>Fecha y Hora</th><th>Tipo</th><th>Usuario</th><th>IP</th><th>Ruta</th><th>Detalle</th></tr>
+          </thead>
+          <tbody>
+            <% registros.forEach((r) => { %>
+              <tr>
+                <td data-label="Fecha y Hora"><%= new Date(r.fecha_hora).toLocaleString('es-CR', { timeZone: 'America/Costa_Rica' }) %></td>
+                <td data-label="Tipo"><span class="badge <%= colores[r.tipo_evento] || 'off' %>"><%= etiquetas[r.tipo_evento] || r.tipo_evento %></span></td>
+                <!-- El usuario intentado en un login fallido lo escribe quien ataca: siempre con <%= %> -->
+                <td data-label="Usuario"><%= r.usuario || '-' %></td>
+                <td data-label="IP"><%= r.ip %></td>
+                <td data-label="Ruta" class="ruta"><%= r.ruta %></td>
+                <td data-label="Detalle" class="detalle"><%= r.detalle %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+        <% if (registros.length === 0) { %>
+          <p class="vacio">No hay registros que mostrar.</p>
+        <% } %>
+      </div>
+    </main>
+  </body>
+</html>

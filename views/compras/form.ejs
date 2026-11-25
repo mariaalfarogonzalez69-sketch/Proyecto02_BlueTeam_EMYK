@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Formulario de Compra</title>
+    <link rel="stylesheet" href="/css/eventos-compras.css" />
+  </head>
+  <body class="ev">
+    <header class="barra">
+      <span class="marca">Entradas</span>
+      <nav><a href="/">Inicio</a><a href="/eventos">Eventos</a></nav>
+    </header>
+
+    <main class="contenedor angosto">
+    <h1>Comprar entradas para: <%= evento.nombre %></h1>
+
+    <% if (locals.noDisponible) { %>
+        <p class="alerta aviso"><%= noDisponible %></p>
+        <a class="boton secundario" href="/eventos/<%= evento.id %>">Volver al evento</a>
+    <% } else { %>
+        <div class="resumen">
+          <div class="dato"><span>Fecha</span><strong><%= evento.fecha.toLocaleString('es-CR', { timeZone: 'America/Costa_Rica' }) %></strong></div>
+          <div class="dato"><span>Precio por entrada</span><strong>₡<%= evento.precio %></strong></div>
+          <div class="dato"><span>Entradas disponibles</span><strong><%= evento.capacidad - evento.entradas_vendidas %></strong></div>
+        </div>
+
+            <% if (errores.length > 0) { %>
+            <div class="alerta error">
+              <ul>
+                <% errores.forEach(e => { %>
+                <li><%= e %></li>
+                <% }) %>
+              </ul>
+            </div>
+            <% } %>
+
+            <form class="formulario tarjeta" method="POST" action="/eventos/<%= evento.id %>/compra">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+            <label>Cantidad de entradas (máximo 6)
+                <input name="cantidad" type="number" min="1" max="6" value="<%= compra.cantidad || 1 %>">
+            </label>
+
+            <label>Nombre del comprador
+                <input name="nombre" required maxlength="100"
+                value="<%= compra.nombre || '' %>">
+            </label>
+
+            <label>Correo
+                <input name="correo" required maxlength="120"
+                type="email" value="<%= compra.correo || '' %>">
+            </label>
+
+            <label>Teléfono (opcional: solo números)
+            <input name="telefono" type="tel" inputmode="numeric" maxlength="30"
+                    pattern="[0-9]+"
+                    title="Solo números, sin guiones ni espacios (88880000)"
+                    value="<%= compra.telefono || '' %>">
+            </label>
+
+            <div class="acciones">
+            <button type="submit">Comprar</button>
+            <a class="boton secundario" href="/eventos/<%= evento.id %>">Cancelar</a>
+            </div>
+            </form>
+        <% } %>
+    </main>
+    </body>
+</html>

@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Reporte de ventas</title>
+  <link rel="stylesheet" href="/css/eventos-compras.css" />
+</head>
+<body class="ev">
+  <header class="barra">
+    <span class="marca">Entradas</span>
+    <nav>
+      <a href="/">Inicio</a>
+      <a href="/eventos">Eventos</a>
+      <a href="/reportes/ventas">Reporte de ventas</a>
+    </nav>
+  </header>
+
+  <main class="contenedor">
+    <h1>Reporte de ventas</h1>
+    <p>Resumen de las ventas realizadas en los eventos.</p>
+
+    <section class="tarjeta">
+      <h2>Resumen general</h2>
+      <dl class="ficha">
+        <dt>Compras activas</dt>
+        <dd><%= totales.compras %></dd>
+
+        <dt>Entradas vendidas</dt>
+        <dd><%= totales.entradas %></dd>
+
+        <dt>Total recaudado</dt>
+        <dd>₡<%= Number(totales.recaudacion).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %></dd>
+      </dl>
+    </section>
+
+    <h2>Ventas por evento</h2>
+
+    <% if (reportes.length === 0) { %>
+      <div class="tabla-envoltura">
+        <p class="vacio">Todavía no hay eventos registrados.</p>
+      </div>
+    <% } else { %>
+      <div class="tabla-envoltura">
+        <table class="apilable">
+          <tr>
+            <th>Evento</th>
+            <th class="num">Compras activas</th>
+            <th class="num">Entradas vendidas</th>
+            <th class="num">Total recaudado</th>
+          </tr>
+
+          <% reportes.forEach(reporte => { %>
+            <tr>
+              <td data-label="Evento"><%= reporte.evento %></td>
+              <td data-label="Compras activas" class="num"><%= reporte.compras %></td>
+              <td data-label="Entradas vendidas" class="num"><%= reporte.entradas %></td>
+              <td data-label="Total recaudado" class="num">
+                ₡<%= Number(reporte.recaudacion).toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %>
+              </td>
+            </tr>
+          <% }) %>
+        </table>
+      </div>
+    <% } %>
+
+    <div class="acciones">
+      <a class="boton secundario" href="/">Volver al inicio</a>
+    </div>
+  </main>
+</body>
+</html>

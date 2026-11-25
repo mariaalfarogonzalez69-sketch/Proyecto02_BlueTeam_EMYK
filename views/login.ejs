@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Iniciar sesión</title>
+    <link rel="stylesheet" href="/css/eventos-compras.css" />
+    <link rel="stylesheet" href="/css/sesion.css" />
+  </head>
+  <body class="ev centrado">
+    <main class="login">
+      <div class="tarjeta">
+        <span class="marca">Entradas</span>
+        <h1>Iniciar sesión</h1>
+
+        <!-- <%= %> escapa lo que muestra: previene XSS -->
+        <% if (aviso) { %><div class="alerta aviso"><%= aviso %></div><% } %>
+        <% if (error) { %><div class="alerta error"><%= error %></div><% } %>
+
+        <form class="formulario" method="POST" action="/login">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+          <label>Usuario
+            <input name="username" maxlength="50" required autofocus autocomplete="username">
+          </label>
+
+          <label>Contraseña
+            <input name="password" type="password" maxlength="128" required autocomplete="current-password">
+          </label>
+
+          <button type="submit">Entrar</button>
+        </form>
+      </div>
+      <p class="pie">La sesión se cierra tras 60 segundos de inactividad.</p>
+    </main>
+  </body>
+</html>

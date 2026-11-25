@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= titulo %></title>
+    <link rel="stylesheet" href="/css/eventos-compras.css">
+    <link rel="stylesheet" href="/css/sesion.css">
+    <link rel="stylesheet" href="/css/usuarios-roles.css">
+</head>
+<body class="ev">
+    <header class="barra">
+        <span class="marca">Entradas</span>
+        <nav aria-label="Navegación principal">
+            <a href="/">Inicio</a>
+            <a href="/eventos">Eventos</a>
+            <a href="/usuarios" class="activo">Usuarios</a>
+            <% if (usuario && usuario.rol === 'SuperAdmin') { %>
+                <a href="/roles">Roles</a>
+            <% } %>
+            <% if (usuario && usuario.permisos && usuario.permisos.includes('ver_reportes')) { %>
+                <a href="/reportes/ventas">Reporte de ventas</a>
+            <% } %>
+            <% if (usuario && usuario.rol === 'Taquillero') { %>
+                <a href="/puerta">Validar entrada</a>
+            <% } %>
+            <% if (usuario && usuario.rol === 'SuperAdmin') { %>
+                <a href="/auditoria">Auditoría</a>
+            <% } %>
+            <form class="salir" method="POST" action="/logout">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button type="submit">Cerrar sesión</button>
+            </form>
+        </nav>
+    </header>
+
+    <main class="admin-contenedor">
+        <div class="admin-encabezado">
+            <div>
+                <h1><%= titulo %></h1>
+                <p class="admin-descripcion">Consulta y administración de las cuentas registradas en el sistema.</p>
+            </div>
+
+            <% if (esSuperAdmin) { %>
+                <a class="boton" href="/usuarios/nuevo">Crear usuario</a>
+            <% } %>
+        </div>
+
+        <% if (mensaje === 'creado') { %>
+            <p class="admin-mensaje" role="status">Usuario creado correctamente.</p>
+        <% } else if (mensaje === 'actualizado') { %>
+            <p class="admin-mensaje" role="status">Usuario actualizado correctamente.</p>
+        <% } else if (mensaje === 'eliminado') { %>
+            <p class="admin-mensaje" role="status">Usuario eliminado correctamente.</p>
+        <% } %>
+
+        <section class="tarjeta">
+            <div class="admin-tabla">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Nombre</th>
+                            <th>Correo</th>
+                            <th>Identificación</th>
+                            <th>Rol</th>
+                            <th>Permisos</th>
+                            <th>Último inicio de sesión</th>
+                            <% if (esSuperAdmin) { %>
+                                <th>Acciones</th>
+                            <% } %>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (usuarios.length === 0) { %>
+                            <tr>
+                                <td colspan="<%= esSuperAdmin ? 8 : 7 %>">
+                                    No hay usuarios registrados.
+                                </td>
+                            </tr>
+                        <% } %>
+
+                        <% usuarios.forEach(usuarioItem => { %>
+                            <tr>
+                                <td><strong><%= usuarioItem.username %></strong></td>
+                                <td><%= usuarioItem.nombre %></td>
+                                <td><%= usuarioItem.correo %></td>
+                                <td><%= usuarioItem.identificacion %></td>
+                                <td>
+                                    <span class="badge ok">
+                                        <%= usuarioItem.Rol ? usuarioItem.Rol.nombre : 'Sin rol' %>
+                                    </span>
+                                </td>
+                                <td class="permisos">
+                                    <%= usuarioItem.Rol && usuarioItem.Rol.Permisos.length
+                                        ? usuarioItem.Rol.Permisos.map(p => p.nombre).join(', ')
+                                        : 'Ninguno' %>
+                                </td>
+                                <td>
+                                    <%= usuarioItem.ultimo_login
+                                        ? new Date(usuarioItem.ultimo_login).toLocaleString('es-CR')
+                                        : 'Nunca' %>
+                                </td>
+
+                                <% if (esSuperAdmin) { %>
+                                    <td>
+                                        <div class="admin-acciones">
+                                            <a class="admin-enlace" href="/usuarios/<%= usuarioItem.id %>/editar">
+                                                Editar
+                                            </a>
+                                            <form action="/usuarios/<%= usuarioItem.id %>/eliminar"
+                                                  method="POST"
+                                                  data-confirm="¿Está seguro de eliminar este usuario?">
+                                                <input type="hidden" name="_csrf"
+                                                       value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>">
+                                                <button class="boton peligro" type="submit">Eliminar</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                <% } %>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="/js/confirmar.js"></script>
+</body>
+</html>

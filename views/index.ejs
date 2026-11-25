@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><%= titulo %></title>
+    <link rel="stylesheet" href="/css/eventos-compras.css" />
+    <link rel="stylesheet" href="/css/sesion.css" />
+  </head>
+  <body class="ev">
+    <header class="barra">
+      <span class="marca">Entradas</span>
+      <nav>
+        <a href="/">Inicio</a>
+        <a href="/eventos">Eventos</a>
+
+        <a href="/usuarios">Usuarios</a>
+        <% if (usuario.rol === 'SuperAdmin') { %><a href="/roles">Roles</a><% } %>
+
+        <% if (usuario.permisos && usuario.permisos.includes('ver_reportes')) { %>
+        <a href="/reportes/ventas">Reporte de ventas</a>
+        <% } %>
+
+        <% if (usuario.rol === 'Taquillero') { %><a href="/puerta">Validar entrada</a><% } %>
+
+        <% if (usuario.rol === 'SuperAdmin') { %><a href="/auditoria">Auditoría</a><% } %>
+        <form class="salir" method="POST" action="/logout">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <button type="submit">Cerrar sesión</button>
+        </form>
+      </nav>
+    </header>
+
+    <main class="contenedor">
+      <h1>Inicio</h1>
+
+      <div class="tarjeta">
+        <p>
+          Sesión iniciada como <strong><%= usuario.username %></strong>
+          <span class="badge ok"><%= usuario.rol %></span>
+        </p>
+        <div class="acciones">
+          <a class="boton" href="/eventos">Ver eventos</a>
+          <a class="boton secundario" href="/usuarios">Gestión de usuarios</a>
+          <% if (usuario.rol === 'SuperAdmin') { %>
+            <a class="boton secundario" href="/roles">Gestión de roles</a>
+          <% } %>
+          <% if (usuario.rol === 'SuperAdmin') { %>
+            <a class="boton secundario" href="/auditoria">Registro de auditoría</a>
+          <% } %>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
